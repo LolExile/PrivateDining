@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+:root {
+  --linen: #faf8f4;
+  --paper: #ffffff;
+  --ink: #1c2321;
+  --ink-soft: #55605b;
+  --bottle: #1e4d3b;
+  --bottle-deep: #143528;
+  --brass: #b08d4a;
+  --brass-soft: #f3ead9;
+  --claret: #7a2e2e;
+  --claret-soft: #f6e9e7;
+  --sage: #e8ede7;
+  --hairline: #e3ded4;
+}
+
+@theme inline {
+  --color-linen: var(--linen);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-bottle: var(--bottle);
+  --color-bottle-deep: var(--bottle-deep);
+  --color-brass: var(--brass);
+  --color-brass-soft: var(--brass-soft);
+  --color-claret: var(--claret);
+  --color-claret-soft: var(--claret-soft);
+  --color-sage: var(--sage);
+  --color-hairline: var(--hairline);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-manrope);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--linen);
+  color: var(--ink);
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+.font-data {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-feature-settings: "tnum";
+}
+
+/* thin scrollbars for the results rail */
+.rail-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+.rail-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.rail-scroll::-webkit-scrollbar-thumb {
+  background: var(--hairline);
+  border-radius: 3px;
+}
+
+/* numbered map markers */
+.rank-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 4px;
+  background: var(--bottle);
+  color: #fff;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgb(28 35 33 / 0.35);
+}
+.rank-marker.top {
+  background: var(--brass);
+  color: var(--ink);
+}
+.origin-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--claret);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px var(--claret), 0 2px 6px rgb(0 0 0 / 0.3);
+}
+
+.leaflet-container {
+  font-family: var(--font-manrope), sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
