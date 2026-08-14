@@ -54,6 +54,19 @@ also powers the offline fallback. After editing the JSON, regenerate with:
 node scripts/generate-seed.mjs
 ```
 
+### 3. (Optional) Refresh venue data from Yelp
+
+With a free [Yelp Fusion API key](https://www.yelp.com/developers) in `.env.local`
+(`YELP_API_KEY=...`), pull live ratings, review counts, price tiers, phones, and photos
+for every venue:
+
+```bash
+node scripts/enrich-yelp.mjs   # updates venues.json + regenerates seed SQL
+```
+
+Curated private-room capacities are kept — Yelp has no private-dining data; enrichment
+refreshes the public signals and upgrades matched listings' trust labels.
+
 ## The three challenge scenarios
 
 One-click shortcuts are built into the search panel:
