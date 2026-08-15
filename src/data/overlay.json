@@ -1,1 +1,2075 @@
-[]
+[
+  {
+    "ta_location_id": null,
+    "id": "carmines-times-square",
+    "name": "Carmine's Italian Restaurant",
+    "address": "200 W 44th St, New York, NY 10036",
+    "lat": 40.7576,
+    "lng": -73.987,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Family-style Southern Italian institution one block off Times Square, built for big tables and bigger platters.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=900&q=60",
+    "menu_highlights": [
+      {
+        "dish": "Chicken Parmigiana (family style)",
+        "price": "$48"
+      },
+      {
+        "dish": "Linguine with White Clam Sauce",
+        "price": "$42"
+      },
+      {
+        "dish": "Veal Marsala",
+        "price": "$56"
+      },
+      {
+        "dish": "Titanic Ice Cream Sundae",
+        "price": "$28"
+      }
+    ],
+    "contact": {
+      "name": "Group Sales Office",
+      "email": "groupsales@carminesnyc.com",
+      "phone": "(212) 221-3800"
+    },
+    "rooms": [
+      {
+        "name": "Palace Room",
+        "seated": 80,
+        "standing": 100,
+        "notes": "Second-floor room with full AV"
+      },
+      {
+        "name": "Broadway Room",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Semi-private curtained alcove"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "gallaghers-steakhouse",
+    "name": "Gallaghers Steakhouse",
+    "address": "228 W 52nd St, New York, NY 10019",
+    "lat": 40.7634,
+    "lng": -73.9837,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "1927 Broadway steakhouse with a glass-walled dry-aging room and clubby wood-panelled private rooms.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=900&q=60",
+    "menu_highlights": [
+      {
+        "dish": "Dry-Aged NY Strip",
+        "price": "$72"
+      },
+      {
+        "dish": "Jumbo Lump Crab Cake",
+        "price": "$32"
+      },
+      {
+        "dish": "Creamed Spinach",
+        "price": "$16"
+      },
+      {
+        "dish": "NY Cheesecake",
+        "price": "$16"
+      }
+    ],
+    "contact": {
+      "name": "Private Events Team",
+      "email": "events@gallaghersnysteakhouse.com",
+      "phone": "(212) 586-5000"
+    },
+    "rooms": [
+      {
+        "name": "The 52nd Street Room",
+        "seated": 80,
+        "standing": 100,
+        "notes": "Full buyout of front dining room"
+      },
+      {
+        "name": "Wine Room",
+        "seated": 24,
+        "standing": 30,
+        "notes": "Surrounded by the cellar collection"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "becco-nyc",
+    "name": "Becco",
+    "address": "355 W 46th St, New York, NY 10036",
+    "lat": 40.7605,
+    "lng": -73.9899,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Lidia Bastianich's Restaurant Row trattoria, famous for the unlimited fresh pasta sinfonia.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Sinfonia di Paste (unlimited trio)",
+        "price": "$36"
+      },
+      {
+        "dish": "Osso Buco alla Milanese",
+        "price": "$49"
+      },
+      {
+        "dish": "Grilled Swordfish",
+        "price": "$38"
+      }
+    ],
+    "contact": {
+      "name": "Private Dining Coordinator",
+      "email": null,
+      "phone": "(212) 397-7597"
+    },
+    "rooms": [
+      {
+        "name": "Terrazza",
+        "seated": 30,
+        "standing": 40,
+        "notes": "Second-floor private room"
+      },
+      {
+        "name": "Vino Room",
+        "seated": 16,
+        "standing": 0,
+        "notes": "Intimate wine-lined room"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "sardis-nyc",
+    "name": "Sardi's",
+    "address": "234 W 44th St, New York, NY 10036",
+    "lat": 40.7579,
+    "lng": -73.9875,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "The caricature-covered Broadway landmark; upstairs banquet rooms host opening-night parties.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Shrimp Sardi",
+        "price": "$34"
+      },
+      {
+        "dish": "Steak Tartare (prepared tableside)",
+        "price": "$39"
+      },
+      {
+        "dish": "Roast Long Island Duckling",
+        "price": "$42"
+      }
+    ],
+    "contact": {
+      "name": "Banquet Office",
+      "email": "banquets@sardis.com",
+      "phone": "(212) 221-8440"
+    },
+    "rooms": [
+      {
+        "name": "Belasco Room",
+        "seated": 65,
+        "standing": 80,
+        "notes": "Third floor, windows on 44th St"
+      },
+      {
+        "name": "Eugenia Room",
+        "seated": 120,
+        "standing": 150,
+        "notes": "Full-floor banquet space"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "del-friscos-nyc",
+    "name": "Del Frisco's Double Eagle Steakhouse",
+    "address": "1221 Avenue of the Americas, New York, NY 10020",
+    "lat": 40.7597,
+    "lng": -73.9818,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Three-story glass flagship across from Radio City with a dedicated private-dining floor.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=900&q=60",
+    "menu_highlights": [
+      {
+        "dish": "45-Day Dry-Aged Ribeye",
+        "price": "$78"
+      },
+      {
+        "dish": "Cheesesteak Eggrolls",
+        "price": "$24"
+      },
+      {
+        "dish": "Lobster Mac & Cheese",
+        "price": "$29"
+      }
+    ],
+    "contact": {
+      "name": "Private Events Director",
+      "email": "nycevents@delfriscos.com",
+      "phone": "(212) 575-5129"
+    },
+    "rooms": [
+      {
+        "name": "Eagle Room",
+        "seated": 80,
+        "standing": 100,
+        "notes": "Largest room, full AV and bar"
+      },
+      {
+        "name": "Skyline Room",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Views over Sixth Avenue"
+      },
+      {
+        "name": "Board Room",
+        "seated": 16,
+        "standing": 0,
+        "notes": "Executive dinner setting"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "bond45-nyc",
+    "name": "Bond 45",
+    "address": "221 W 46th St, New York, NY 10036",
+    "lat": 40.7593,
+    "lng": -73.9861,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Sprawling Theater District Italian kitchen and bar inside the old Bond clothing store sign.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Mozzarella Tasting",
+        "price": "$28"
+      },
+      {
+        "dish": "Tagliatelle Bolognese",
+        "price": "$34"
+      },
+      {
+        "dish": "Bistecca Fiorentina for two",
+        "price": "$130"
+      }
+    ],
+    "contact": {
+      "name": "Events Office",
+      "email": null,
+      "phone": "(212) 869-4545"
+    },
+    "rooms": [
+      {
+        "name": "Mezzanine",
+        "seated": 90,
+        "standing": 140,
+        "notes": "Overlooks the main dining room"
+      },
+      {
+        "name": "Sofia Room",
+        "seated": 45,
+        "standing": 65,
+        "notes": "Private with dedicated bar"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "tonys-di-napoli",
+    "name": "Tony's Di Napoli",
+    "address": "147 W 43rd St, New York, NY 10036",
+    "lat": 40.7557,
+    "lng": -73.9848,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Family-style red-sauce favorite steps from Times Square that routinely seats groups in the hundreds.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=900&q=60",
+    "menu_highlights": [
+      {
+        "dish": "Penne alla Vodka (family style)",
+        "price": "$38"
+      },
+      {
+        "dish": "Chicken Scarpariello",
+        "price": "$44"
+      },
+      {
+        "dish": "Zeppole",
+        "price": "$18"
+      }
+    ],
+    "contact": {
+      "name": "Group Dining Team",
+      "email": "events@tonysnyc.com",
+      "phone": "(212) 221-0100"
+    },
+    "rooms": [
+      {
+        "name": "Times Square Room",
+        "seated": 150,
+        "standing": 200,
+        "notes": "Dedicated private floor"
+      },
+      {
+        "name": "Garden Room",
+        "seated": 60,
+        "standing": 80,
+        "notes": "Skylit rear room"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "havana-central",
+    "name": "Havana Central Times Square",
+    "address": "151 W 46th St, New York, NY 10036",
+    "lat": 40.7589,
+    "lng": -73.984,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Live salsa bands, mojito pitchers, and one of the biggest event floors in the Theater District.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Ropa Vieja",
+        "price": "$29"
+      },
+      {
+        "dish": "Lechón Asado",
+        "price": "$31"
+      },
+      {
+        "dish": "Mojito Pitchers",
+        "price": "$58"
+      }
+    ],
+    "contact": {
+      "name": "Events & Catering",
+      "email": "events@havanacentral.com",
+      "phone": "(212) 398-7440"
+    },
+    "rooms": [
+      {
+        "name": "Havana Ballroom",
+        "seated": 180,
+        "standing": 300,
+        "notes": "Full second floor with stage"
+      },
+      {
+        "name": "Salsa Lounge",
+        "seated": 60,
+        "standing": 100,
+        "notes": "Semi-private with bar"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "ruths-chris-nyc",
+    "name": "Ruth's Chris Steak House",
+    "address": "148 W 51st St, New York, NY 10019",
+    "lat": 40.7611,
+    "lng": -73.9822,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Sizzling-butter steaks in a polished midtown room with a suite of configurable private spaces.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Filet, 8oz — sizzling butter",
+        "price": "$62"
+      },
+      {
+        "dish": "Seared Ahi Tuna",
+        "price": "$26"
+      },
+      {
+        "dish": "Potatoes au Gratin",
+        "price": "$15"
+      }
+    ],
+    "contact": {
+      "name": "Sales Manager",
+      "email": null,
+      "phone": "(212) 245-9600"
+    },
+    "rooms": [
+      {
+        "name": "Broadway Room",
+        "seated": 80,
+        "standing": 0,
+        "notes": "Combines two rooms"
+      },
+      {
+        "name": "Gallery",
+        "seated": 30,
+        "standing": 0,
+        "notes": "Off the main dining room"
+      },
+      {
+        "name": "Study",
+        "seated": 12,
+        "standing": 0,
+        "notes": "Board-style table"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "le-bernardin",
+    "name": "Le Bernardin",
+    "address": "155 W 51st St, New York, NY 10019",
+    "lat": 40.7616,
+    "lng": -73.9818,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Eric Ripert's three-Michelin-star seafood temple; Le Bernardin Privé is its serene private-event floor.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy",
+      "kosher"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Chef's Tasting Menu",
+        "price": "$298"
+      },
+      {
+        "dish": "Poached Lobster",
+        "price": "—"
+      },
+      {
+        "dish": "Barely-Cooked Salmon",
+        "price": "—"
+      }
+    ],
+    "contact": {
+      "name": "Privé Events Team",
+      "email": "prive@le-bernardin.com",
+      "phone": "(212) 554-1515"
+    },
+    "rooms": [
+      {
+        "name": "Salon",
+        "seated": 70,
+        "standing": 80,
+        "notes": "Full Privé floor"
+      },
+      {
+        "name": "Screening Room",
+        "seated": 20,
+        "standing": 30,
+        "notes": "Intimate with projection wall"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "stk-midtown",
+    "name": "STK Steakhouse Midtown",
+    "address": "1114 Avenue of the Americas, New York, NY 10036",
+    "lat": 40.7553,
+    "lng": -73.984,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "DJ-driven modern steakhouse with a rooftop that flips into reception mode for big corporate crowds.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "reception",
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Wagyu Beef Sliders",
+        "price": "$26"
+      },
+      {
+        "dish": "Tuna Tartare",
+        "price": "$28"
+      },
+      {
+        "dish": "Dry-Aged Bone-In Strip",
+        "price": "$84"
+      }
+    ],
+    "contact": {
+      "name": "Events Sales",
+      "email": null,
+      "phone": "(646) 624-2455"
+    },
+    "rooms": [
+      {
+        "name": "Rooftop",
+        "seated": 120,
+        "standing": 200,
+        "notes": "Seasonal, covered options"
+      },
+      {
+        "name": "Vault Room",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Lower-level private room"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "toloache-50",
+    "name": "Toloache",
+    "address": "251 W 50th St, New York, NY 10019",
+    "lat": 40.762,
+    "lng": -73.985,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "Bi-level contemporary Mexican bistro with a mezcal library and a snug mezzanine for groups.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Taquiza Tasting (grasshopper optional)",
+        "price": "$34"
+      },
+      {
+        "dish": "Enchiladas de Mole Negro",
+        "price": "$29"
+      },
+      {
+        "dish": "Tableside Guacamole",
+        "price": "$19"
+      }
+    ],
+    "contact": {
+      "name": "Reservations",
+      "email": null,
+      "phone": "(212) 581-1818"
+    },
+    "rooms": [
+      {
+        "name": "Mezzanine",
+        "seated": 30,
+        "standing": 40,
+        "notes": "Semi-private balcony level"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "tang-pavilion",
+    "name": "Tang Pavilion",
+    "address": "65 W 55th St, New York, NY 10019",
+    "lat": 40.7633,
+    "lng": -73.9769,
+    "city": "New York",
+    "neighbourhood": null,
+    "region": "nyc",
+    "description": "White-tablecloth Shanghainese standby near City Center, quietly experienced with banquet parties.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Peking Duck (whole)",
+        "price": "$68"
+      },
+      {
+        "dish": "Soup Dumplings",
+        "price": "$14"
+      },
+      {
+        "dish": "Crispy Prawns with Walnuts",
+        "price": "$32"
+      }
+    ],
+    "contact": {
+      "name": "Manager",
+      "email": null,
+      "phone": "(212) 956-6888"
+    },
+    "rooms": [
+      {
+        "name": "Banquet Room",
+        "seated": 60,
+        "standing": 0,
+        "notes": "Round-table banquet setup — call to confirm"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "waterbar-sf",
+    "name": "Waterbar",
+    "address": "399 The Embarcadero, San Francisco, CA 94105",
+    "lat": 37.7902,
+    "lng": -122.3887,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Floor-to-ceiling aquarium columns and Bay Bridge views; private rooms open onto the Embarcadero.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Iced Shellfish Platter",
+        "price": "$95"
+      },
+      {
+        "dish": "Grilled Whole Branzino",
+        "price": "$44"
+      },
+      {
+        "dish": "Oysters (daily rotation)",
+        "price": "$4/ea"
+      }
+    ],
+    "contact": {
+      "name": "Events Director",
+      "email": "events@waterbarsf.com",
+      "phone": "(415) 284-9922"
+    },
+    "rooms": [
+      {
+        "name": "Terrace Room",
+        "seated": 48,
+        "standing": 60,
+        "notes": "Bridge views, opens to terrace"
+      },
+      {
+        "name": "Chart Room",
+        "seated": 24,
+        "standing": 30,
+        "notes": "Board-style with AV"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "epic-steak-sf",
+    "name": "EPIC Steak",
+    "address": "369 The Embarcadero, San Francisco, CA 94105",
+    "lat": 37.7899,
+    "lng": -122.3891,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Waterfront steakhouse with fire-pit terrace directly under the Bay Bridge lights.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Wood-Grilled Ribeye",
+        "price": "$74"
+      },
+      {
+        "dish": "Dungeness Crab Cake",
+        "price": "$28"
+      },
+      {
+        "dish": "S'mores Baked Alaska",
+        "price": "$18"
+      }
+    ],
+    "contact": {
+      "name": "Private Dining Manager",
+      "email": "events@epicsteak.com",
+      "phone": "(415) 369-9955"
+    },
+    "rooms": [
+      {
+        "name": "Quiver Room",
+        "seated": 80,
+        "standing": 120,
+        "notes": "Glass walls on the water"
+      },
+      {
+        "name": "Fire Terrace",
+        "seated": 40,
+        "standing": 80,
+        "notes": "Heated outdoor reception space"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "boulevard-sf",
+    "name": "Boulevard",
+    "address": "1 Mission St, San Francisco, CA 94105",
+    "lat": 37.7935,
+    "lng": -122.3927,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "James Beard-winning Belle Époque dining room in the 1889 Audiffred Building on the Embarcadero.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Wood-Oven Roasted Duck",
+        "price": "$52"
+      },
+      {
+        "dish": "Prime Filet with Bone Marrow",
+        "price": "$68"
+      },
+      {
+        "dish": "Butterscotch Pot de Crème",
+        "price": "$16"
+      }
+    ],
+    "contact": {
+      "name": "Events Coordinator",
+      "email": "events@boulevardrestaurant.com",
+      "phone": "(415) 543-6084"
+    },
+    "rooms": [
+      {
+        "name": "The Loft",
+        "seated": 36,
+        "standing": 45,
+        "notes": "Elevated room above the kitchen"
+      },
+      {
+        "name": "Bay View Room",
+        "seated": 60,
+        "standing": 70,
+        "notes": "Windows on the Embarcadero"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "one-market-sf",
+    "name": "One Market Restaurant",
+    "address": "1 Market St, San Francisco, CA 94105",
+    "lat": 37.7938,
+    "lng": -122.3946,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "High-ceilinged farm-to-table landmark facing the Ferry Building with a full private-dining wing.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Mission Fig & Burrata",
+        "price": "$24"
+      },
+      {
+        "dish": "Slow-Roasted Salmon",
+        "price": "$42"
+      },
+      {
+        "dish": "Butterscotch Pudding",
+        "price": "$14"
+      }
+    ],
+    "contact": {
+      "name": "Director of Events",
+      "email": "events@onemarket.com",
+      "phone": "(415) 777-5577"
+    },
+    "rooms": [
+      {
+        "name": "Vintners Room",
+        "seated": 70,
+        "standing": 90,
+        "notes": "Largest private room"
+      },
+      {
+        "name": "Prosperity Room",
+        "seated": 24,
+        "standing": 30,
+        "notes": "AV-equipped boardroom feel"
+      },
+      {
+        "name": "Full Buyout",
+        "seated": 170,
+        "standing": 220,
+        "notes": "Entire restaurant, evenings"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "perbacco-sf",
+    "name": "Perbacco",
+    "address": "230 California St, San Francisco, CA 94111",
+    "lat": 37.7935,
+    "lng": -122.399,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Piemontese fine dining on California Street — house-made agnolotti and a serious Barolo list.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Agnolotti dal Plin",
+        "price": "$29"
+      },
+      {
+        "dish": "Braised Short Rib",
+        "price": "$46"
+      },
+      {
+        "dish": "Bunet al Cioccolato",
+        "price": "$13"
+      }
+    ],
+    "contact": {
+      "name": "Events Manager",
+      "email": "events@perbaccosf.com",
+      "phone": "(415) 955-0663"
+    },
+    "rooms": [
+      {
+        "name": "Mezzanine",
+        "seated": 40,
+        "standing": 50,
+        "notes": "Overlooks the marble bar"
+      },
+      {
+        "name": "Salumi Room",
+        "seated": 14,
+        "standing": 0,
+        "notes": "Chef's-table intimacy"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "tadich-grill",
+    "name": "Tadich Grill",
+    "address": "240 California St, San Francisco, CA 94111",
+    "lat": 37.7936,
+    "lng": -122.3993,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "California's oldest restaurant (1849) — cioppino, sourdough, and wood-panelled booths.",
+    "dietary": [
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Cioppino",
+        "price": "$48"
+      },
+      {
+        "dish": "Petrale Sole Doré",
+        "price": "$39"
+      },
+      {
+        "dish": "Hangtown Fry",
+        "price": "$28"
+      }
+    ],
+    "contact": {
+      "name": "Front of House",
+      "email": null,
+      "phone": "(415) 391-1849"
+    },
+    "rooms": [
+      {
+        "name": "Back Room",
+        "seated": 24,
+        "standing": 0,
+        "notes": "No formal events program — call to confirm"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "kokkari-sf",
+    "name": "Kokkari Estiatorio",
+    "address": "200 Jackson St, San Francisco, CA 94111",
+    "lat": 37.7969,
+    "lng": -122.3993,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Rustic-luxe Aegean taverna with a roaring hearth — one of SF's most requested private rooms.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Whole Grilled Branzino",
+        "price": "$46"
+      },
+      {
+        "dish": "Moussaka",
+        "price": "$34"
+      },
+      {
+        "dish": "Lamb Chops Riganato",
+        "price": "$58"
+      }
+    ],
+    "contact": {
+      "name": "Private Dining",
+      "email": "events@kokkari.com",
+      "phone": "(415) 981-0983"
+    },
+    "rooms": [
+      {
+        "name": "Private Dining Room",
+        "seated": 40,
+        "standing": 50,
+        "notes": "Fireplace and rotisserie view"
+      },
+      {
+        "name": "Taverna Buyout",
+        "seated": 70,
+        "standing": 120,
+        "notes": "Front room, evenings only"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "yank-sing-sf",
+    "name": "Yank Sing",
+    "address": "101 Spear St, San Francisco, CA 94105",
+    "lat": 37.7917,
+    "lng": -122.393,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Two-generation dim sum institution in Rincon Center with cart service and banquet rooms.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Shanghai Soup Dumplings",
+        "price": "$12"
+      },
+      {
+        "dish": "Peking Duck by the Slice",
+        "price": "$9"
+      },
+      {
+        "dish": "Banquet Menus",
+        "price": "from $58/pp"
+      }
+    ],
+    "contact": {
+      "name": "Banquet Sales",
+      "email": "info@yanksing.com",
+      "phone": "(415) 781-1111"
+    },
+    "rooms": [
+      {
+        "name": "Atrium Room",
+        "seated": 100,
+        "standing": 140,
+        "notes": "Rincon Center atrium overflow"
+      },
+      {
+        "name": "Spear Room",
+        "seated": 40,
+        "standing": 0,
+        "notes": "Round tables, lazy susans"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "harborview-sf",
+    "name": "Harborview Restaurant & Bar",
+    "address": "4 Embarcadero Center, San Francisco, CA 94111",
+    "lat": 37.795,
+    "lng": -122.3957,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Hong Kong-style banquet house with bay views — built for weddings, galas, and 300-person receptions.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Roast Suckling Pig",
+        "price": "$128"
+      },
+      {
+        "dish": "Honey-Walnut Prawns",
+        "price": "$34"
+      },
+      {
+        "dish": "Banquet Set Menus",
+        "price": "from $68/pp"
+      }
+    ],
+    "contact": {
+      "name": "Banquet Director",
+      "email": "events@harborviewsf.com",
+      "phone": "(415) 781-8833"
+    },
+    "rooms": [
+      {
+        "name": "Grand Bay Room",
+        "seated": 200,
+        "standing": 300,
+        "notes": "Full banquet hall, bay windows"
+      },
+      {
+        "name": "Jade Room",
+        "seated": 30,
+        "standing": 40,
+        "notes": "Private round-table room"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "la-mar-sf",
+    "name": "La Mar Cocina Peruana",
+    "address": "Pier 1.5 The Embarcadero, San Francisco, CA 94111",
+    "lat": 37.7973,
+    "lng": -122.3948,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Gastón Acurio's cebichería on the pier — pisco bar and a terrace straight over the water.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Cebiche Clásico",
+        "price": "$26"
+      },
+      {
+        "dish": "Arroz con Mariscos",
+        "price": "$38"
+      },
+      {
+        "dish": "Pisco Sour",
+        "price": "$16"
+      }
+    ],
+    "contact": {
+      "name": "Events Team",
+      "email": "eventossf@lamarcebicheria.com",
+      "phone": "(415) 397-8880"
+    },
+    "rooms": [
+      {
+        "name": "Salón Miraflores",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Private room, pier views"
+      },
+      {
+        "name": "Terraza",
+        "seated": 80,
+        "standing": 120,
+        "notes": "Covered outdoor reception"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "ozumo-sf",
+    "name": "Ozumo",
+    "address": "161 Steuart St, San Francisco, CA 94105",
+    "lat": 37.7916,
+    "lng": -122.3914,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Contemporary izakaya and robata grill with a sake lounge that hosts standing receptions.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Robata Black Cod",
+        "price": "$42"
+      },
+      {
+        "dish": "Omakase Sushi Platter",
+        "price": "$85"
+      },
+      {
+        "dish": "Sake Flights",
+        "price": "$28"
+      }
+    ],
+    "contact": {
+      "name": "Events Sales",
+      "email": "sfevents@ozumo.com",
+      "phone": "(415) 882-1333"
+    },
+    "rooms": [
+      {
+        "name": "Sake Lounge",
+        "seated": 60,
+        "standing": 100,
+        "notes": "Semi-private lounge takeover"
+      },
+      {
+        "name": "Tatami Room",
+        "seated": 16,
+        "standing": 0,
+        "notes": "Traditional low-table room"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "fogo-de-chao-sf",
+    "name": "Fogo de Chão",
+    "address": "201 3rd St, San Francisco, CA 94103",
+    "lat": 37.7847,
+    "lng": -122.4,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Churrasco spit-roast service that scales effortlessly — gaucho chefs carve tableside all night.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Full Churrasco Experience",
+        "price": "$64/pp"
+      },
+      {
+        "dish": "Market Table & Feijoada Bar",
+        "price": "$34/pp"
+      },
+      {
+        "dish": "Picanha (signature cut)",
+        "price": "—"
+      }
+    ],
+    "contact": {
+      "name": "Group Sales",
+      "email": "sanfrancisco@fogo.com",
+      "phone": "(415) 431-3364"
+    },
+    "rooms": [
+      {
+        "name": "Gaucho Room",
+        "seated": 100,
+        "standing": 140,
+        "notes": "Divisible private room"
+      },
+      {
+        "name": "Wine Wall Room",
+        "seated": 30,
+        "standing": 40,
+        "notes": "Glass wine display walls"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "osha-thai-embarcadero",
+    "name": "Osha Thai Embarcadero",
+    "address": "4 Embarcadero Center, San Francisco, CA 94111",
+    "lat": 37.7952,
+    "lng": -122.396,
+    "city": "San Francisco",
+    "neighbourhood": null,
+    "region": "sf",
+    "description": "Sleek modern Thai in Embarcadero Center — lounge seating groups without full privacy.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Volcanic Beef",
+        "price": "$32"
+      },
+      {
+        "dish": "Pad Thai with Prawns",
+        "price": "$24"
+      },
+      {
+        "dish": "Tom Yum Whole Fish",
+        "price": "$38"
+      }
+    ],
+    "contact": {
+      "name": "Manager",
+      "email": null,
+      "phone": "(415) 788-6742"
+    },
+    "rooms": [
+      {
+        "name": "Lounge Section",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Semi-private — call to confirm"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "tropics-hhv",
+    "name": "Tropics Bar & Grill",
+    "address": "2005 Kalia Rd, Honolulu, HI 96815",
+    "lat": 21.2837,
+    "lng": -157.8385,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Toes-in-the-sand beachfront bar inside Hilton Hawaiian Village — the house venue for lawn receptions.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy",
+      "kosher"
+    ],
+    "event_styles": [
+      "reception",
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Kalua Pork Sliders",
+        "price": "$22"
+      },
+      {
+        "dish": "Ahi Poke Bowl",
+        "price": "$26"
+      },
+      {
+        "dish": "Tropical Pupu Platters",
+        "price": "from $45"
+      }
+    ],
+    "contact": {
+      "name": "HHV Events & Catering",
+      "email": "hhvevents@hilton.com",
+      "phone": "(808) 949-4321"
+    },
+    "rooms": [
+      {
+        "name": "Beachfront Buyout",
+        "seated": 180,
+        "standing": 300,
+        "notes": "Full venue with lawn extension"
+      },
+      {
+        "name": "Lanai",
+        "seated": 60,
+        "standing": 90,
+        "notes": "Covered oceanfront section"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "bali-oceanfront-hhv",
+    "name": "Bali Oceanfront",
+    "address": "2005 Kalia Rd, Honolulu, HI 96815",
+    "lat": 21.2839,
+    "lng": -157.8382,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Hilton Hawaiian Village's signature oceanfront dining room — steak, seafood, and sunset views.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy",
+      "kosher"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Whole Kona Lobster",
+        "price": "$88"
+      },
+      {
+        "dish": "Miso Butterfish",
+        "price": "$54"
+      },
+      {
+        "dish": "Wagyu Striploin",
+        "price": "$92"
+      }
+    ],
+    "contact": {
+      "name": "HHV Events & Catering",
+      "email": "hhvevents@hilton.com",
+      "phone": "(808) 949-4321"
+    },
+    "rooms": [
+      {
+        "name": "Private Dining Room",
+        "seated": 40,
+        "standing": 50,
+        "notes": "Ocean-facing glass room"
+      },
+      {
+        "name": "Full Restaurant Buyout",
+        "seated": 120,
+        "standing": 180,
+        "notes": "Evenings, subject to season"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "100-sails",
+    "name": "100 Sails Restaurant & Bar",
+    "address": "100 Holomoana St, Honolulu, HI 96815",
+    "lat": 21.2866,
+    "lng": -157.842,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Prince Waikiki's marina-view dining room — island buffets and one of Waikiki's largest event floors.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy",
+      "kosher"
+    ],
+    "event_styles": [
+      "reception",
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Crab Leg & Prime Rib Buffet",
+        "price": "$98/pp"
+      },
+      {
+        "dish": "Poke & Raw Bar Station",
+        "price": "—"
+      },
+      {
+        "dish": "Reception Packages",
+        "price": "from $75/pp"
+      }
+    ],
+    "contact": {
+      "name": "Prince Waikiki Catering",
+      "email": "catering@princewaikiki.com",
+      "phone": "(808) 944-4494"
+    },
+    "rooms": [
+      {
+        "name": "Promenade Room",
+        "seated": 80,
+        "standing": 120,
+        "notes": "Marina-view private room"
+      },
+      {
+        "name": "Full Venue Reception",
+        "seated": 200,
+        "standing": 350,
+        "notes": "Entire restaurant floor"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "monkeypod-waikiki",
+    "name": "Monkeypod Kitchen by Merriman",
+    "address": "2169 Kalia Rd, Honolulu, HI 96815",
+    "lat": 21.279,
+    "lng": -157.832,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Peter Merriman's farm-to-table beach house at Outrigger Reef — mai tais with lilikoi foam, live music daily.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "reception",
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Saimin Noodles & Pork Belly",
+        "price": "$24"
+      },
+      {
+        "dish": "Wood-Fired Pizzas",
+        "price": "$21"
+      },
+      {
+        "dish": "Famous Mai Tai",
+        "price": "$17"
+      }
+    ],
+    "contact": {
+      "name": "Events Coordinator",
+      "email": "waikikievents@monkeypodkitchen.com",
+      "phone": "(808) 900-4226"
+    },
+    "rooms": [
+      {
+        "name": "Oceanfront Lanai",
+        "seated": 50,
+        "standing": 80,
+        "notes": "Covered, ocean rail seating"
+      },
+      {
+        "name": "Full Buyout",
+        "seated": 180,
+        "standing": 280,
+        "notes": "Both floors, evenings"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "rum-fire-waikiki",
+    "name": "Rum Fire",
+    "address": "2255 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2769,
+    "lng": -157.8291,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Sheraton Waikiki's fire-pit lounge on the sand — built for sunset happy hours at scale.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Kalbi Short Rib Tacos",
+        "price": "$23"
+      },
+      {
+        "dish": "Spicy Garlic Edamame",
+        "price": "$14"
+      },
+      {
+        "dish": "Rum Flight",
+        "price": "$32"
+      }
+    ],
+    "contact": {
+      "name": "Sheraton Waikiki Events",
+      "email": null,
+      "phone": "(808) 922-4422"
+    },
+    "rooms": [
+      {
+        "name": "Lounge Takeover",
+        "seated": 150,
+        "standing": 250,
+        "notes": "Oceanfront fire-pit terraces"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "dukes-waikiki",
+    "name": "Duke's Waikiki",
+    "address": "2335 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2766,
+    "lng": -157.8262,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Barefoot-luxe beachfront legend honoring Duke Kahanamoku — hula pie is mandatory.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Huli Huli Chicken",
+        "price": "$34"
+      },
+      {
+        "dish": "Fresh Catch, Parmesan Crusted",
+        "price": "$44"
+      },
+      {
+        "dish": "Hula Pie",
+        "price": "$14"
+      }
+    ],
+    "contact": {
+      "name": "Banquet Manager",
+      "email": "dukesbanquets@tsrestaurants.com",
+      "phone": "(808) 922-2268"
+    },
+    "rooms": [
+      {
+        "name": "Canoe Club Room",
+        "seated": 60,
+        "standing": 100,
+        "notes": "Private upstairs room"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "hula-grill-waikiki",
+    "name": "Hula Grill Waikiki",
+    "address": "2335 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2766,
+    "lng": -157.8262,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Plantation-house dining room above Duke's with panoramic Diamond Head views.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Macadamia Nut Crusted Mahi",
+        "price": "$42"
+      },
+      {
+        "dish": "Pineapple Fried Rice",
+        "price": "$26"
+      },
+      {
+        "dish": "Kimo's Original Hula Pie",
+        "price": "$14"
+      }
+    ],
+    "contact": {
+      "name": "Group Dining",
+      "email": null,
+      "phone": "(808) 923-4852"
+    },
+    "rooms": [
+      {
+        "name": "Ocean Lanai",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Semi-private veranda section"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "wolfgangs-waikiki",
+    "name": "Wolfgang's Steakhouse Waikiki",
+    "address": "2301 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2778,
+    "lng": -157.8272,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Peter Luger-lineage dry-aged porterhouse in the Royal Hawaiian Center, with clubby private rooms.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Porterhouse for Four",
+        "price": "$260"
+      },
+      {
+        "dish": "Jumbo Shrimp Cocktail",
+        "price": "$29"
+      },
+      {
+        "dish": "German Potatoes",
+        "price": "$16"
+      }
+    ],
+    "contact": {
+      "name": "Private Events",
+      "email": "waikiki@wolfgangssteakhouse.net",
+      "phone": "(808) 922-3600"
+    },
+    "rooms": [
+      {
+        "name": "Boardroom",
+        "seated": 40,
+        "standing": 0,
+        "notes": "Wine-wall private room"
+      },
+      {
+        "name": "Terrace Buyout",
+        "seated": 80,
+        "standing": 120,
+        "notes": "Open-air section over Kalakaua"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "roys-waikiki",
+    "name": "Roy's Waikiki",
+    "address": "226 Lewers St, Honolulu, HI 96815",
+    "lat": 21.2787,
+    "lng": -157.829,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Roy Yamaguchi's flagship Hawaiian-fusion kitchen — misoyaki butterfish and melting hot chocolate soufflé.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Misoyaki Butterfish",
+        "price": "$52"
+      },
+      {
+        "dish": "Braised Short Ribs",
+        "price": "$49"
+      },
+      {
+        "dish": "Melting Hot Chocolate Soufflé",
+        "price": "$16"
+      }
+    ],
+    "contact": {
+      "name": "Events Coordinator",
+      "email": "waikikievents@roysrestaurant.com",
+      "phone": "(808) 923-7697"
+    },
+    "rooms": [
+      {
+        "name": "Private Dining Room",
+        "seated": 24,
+        "standing": 0,
+        "notes": "Glass-walled wine room"
+      },
+      {
+        "name": "Lanai Section",
+        "seated": 60,
+        "standing": 80,
+        "notes": "Semi-private covered patio"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "morimoto-asia-waikiki",
+    "name": "Morimoto Asia Waikiki",
+    "address": "2490 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2712,
+    "lng": -157.8222,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Iron Chef Morimoto's pan-Asian hall at the Alohilani — sushi, Peking duck, and ocean-view terraces.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy",
+      "kosher"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Morimoto Peking Duck",
+        "price": "$88"
+      },
+      {
+        "dish": "Ishiyaki Buri Bop",
+        "price": "$46"
+      },
+      {
+        "dish": "Omakase Sushi",
+        "price": "from $95"
+      }
+    ],
+    "contact": {
+      "name": "Alohilani Events",
+      "email": "events@alohilaniresort.com",
+      "phone": "(808) 922-0022"
+    },
+    "rooms": [
+      {
+        "name": "Private Dining Room",
+        "seated": 30,
+        "standing": 40,
+        "notes": "Sliding-screen room"
+      },
+      {
+        "name": "Terrace Reception",
+        "seated": 120,
+        "standing": 200,
+        "notes": "Ocean-view terrace takeover"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "herringbone-waikiki",
+    "name": "Herringbone Waikiki",
+    "address": "2330 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2772,
+    "lng": -157.8253,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Open-air 'ocean-to-table' loft in International Market Place under a century-old banyan tree.",
+    "dietary": [
+      "vegetarian",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "reception",
+      "seated"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Whole Roasted Fish",
+        "price": "$52"
+      },
+      {
+        "dish": "Oyster Hour Selection",
+        "price": "$3.50/ea"
+      },
+      {
+        "dish": "Lobster Roll",
+        "price": "$36"
+      }
+    ],
+    "contact": {
+      "name": "Events Team",
+      "email": "eventswaikiki@herringboneeats.com",
+      "phone": "(808) 797-2435"
+    },
+    "rooms": [
+      {
+        "name": "Sunroom",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Glass-wrapped private corner"
+      },
+      {
+        "name": "Full Venue",
+        "seated": 150,
+        "standing": 250,
+        "notes": "Complete open-air buyout"
+      }
+    ]
+  },
+  {
+    "ta_location_id": null,
+    "id": "pf-changs-waikiki",
+    "name": "P.F. Chang's Waikiki",
+    "address": "2201 Kalakaua Ave, Honolulu, HI 96815",
+    "lat": 21.2786,
+    "lng": -157.8296,
+    "city": "Honolulu",
+    "neighbourhood": null,
+    "region": "waikiki",
+    "description": "Two-story wok house at Royal Hawaiian Center with lantern-lit balcony over Kalakaua.",
+    "dietary": [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "nut_allergy"
+    ],
+    "event_styles": [
+      "seated",
+      "reception"
+    ],
+    "menu_image_url": null,
+    "menu_highlights": [
+      {
+        "dish": "Chang's Lettuce Wraps",
+        "price": "$16"
+      },
+      {
+        "dish": "Mongolian Beef",
+        "price": "$28"
+      },
+      {
+        "dish": "Great Wall of Chocolate",
+        "price": "$13"
+      }
+    ],
+    "contact": {
+      "name": "Banquet Line",
+      "email": null,
+      "phone": "(808) 628-6760"
+    },
+    "rooms": [
+      {
+        "name": "Balcony Room",
+        "seated": 40,
+        "standing": 60,
+        "notes": "Private upstairs room"
+      },
+      {
+        "name": "Main Floor Section",
+        "seated": 100,
+        "standing": 140,
+        "notes": "Semi-private partition"
+      }
+    ]
+  }
+]
