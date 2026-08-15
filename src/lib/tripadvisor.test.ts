@@ -78,11 +78,23 @@ describe("isExcludedByName", () => {
     expect(isExcludedByName("Häagen-Dazs")).toBe(true);
     expect(isExcludedByName("I'm Donut ?")).toBe(true);
     expect(isExcludedByName("Sandbar Concessions Inc")).toBe(true);
+    expect(isExcludedByName("Jamba Juice")).toBe(true);
   });
 
   it("accepts genuine dining venues", () => {
     expect(isExcludedByName("Carmine's Italian Restaurant")).toBe(false);
     expect(isExcludedByName("Keens Steakhouse")).toBe(false);
     expect(isExcludedByName("Le Bernardin")).toBe(false);
+    expect(isExcludedByName("Le Marais")).toBe(false);
+  });
+
+  it("does not match a chain name embedded inside a longer word", () => {
+    // Regression: raw substring matching on "jamba" used to false-reject a
+    // genuine Cajun restaurant because "jamba" is a substring of "jambalaya".
+    expect(isExcludedByName("Mama's Jambalaya House")).toBe(false);
+  });
+
+  it("no longer excludes on the generic 'candy' pattern", () => {
+    expect(isExcludedByName("Rock Candy Kitchen")).toBe(false);
   });
 });

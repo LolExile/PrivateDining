@@ -75,7 +75,17 @@ export async function GET(request: Request) {
       detailsAttempts++;
       const details = await locationDetails(r.id).catch(() => null);
       if (!isDiningExperience(details?.price_tier ?? null)) continue;
-      kept.push({ ...r, ...(details ?? {}) });
+      kept.push({
+        ...r,
+        ...(details ?? {}),
+        // Details' rating/website fields are nullable. The nearby values
+        // already passed isPlausibleVenue (rating) or came from a real
+        // source (website), so a null from details must not erase them.
+        rating: details?.rating ?? r.rating,
+        review_count: details?.review_count ?? r.review_count,
+        ratingImageUrl: details?.ratingImageUrl ?? r.ratingImageUrl,
+        website: details?.website ?? r.website,
+      });
     }
 
     // Photos only for the final kept list — rejected candidates never cost a

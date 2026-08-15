@@ -103,10 +103,12 @@ export function isDiningExperience(priceTier: number | null): boolean {
 
 /**
  * Applied to nearby results before any details call, so excluded venues cost
- * nothing beyond the page they arrived on. Substring matching on a normalised
- * name: crude, but the alternative is paying for a details call on every
- * Dunkin' in the radius. Terra offers no category or cuisine field to do this
- * properly — its documented category filter is accepted and ignored.
+ * nothing beyond the page they arrived on. Word-boundary matching on a
+ * normalised name — not raw substring matching, which false-accepts as a
+ * false-reject: "jamba" would otherwise match "Jambalaya", silently
+ * discarding a genuine restaurant with no log and no way to recover it.
+ * Terra offers no category or cuisine field to do this properly — its
+ * documented category filter is accepted and ignored.
  */
 const EXCLUDED_NAME_PATTERNS = [
   // Fast food
@@ -126,14 +128,33 @@ const EXCLUDED_NAME_PATTERNS = [
   "haagen", "häagen", "ben & jerry", "baskin", "cold stone", "dairy queen",
   "krispy kreme", "cinnabon", "insomnia cookies", "crumbl", "gelato",
   "ice cream", "frozen yogurt", "froyo", "donut", "doughnut", "cupcake",
-  "macaron", "candy", "chocolatier",
+  "macaron", "chocolatier",
   // Not a dining venue at all
-  "concession", "food court", "kiosk",
+  "concession", "concessions", "food court", "kiosk",
 ];
 
+/** Strip diacritics so "Häagen-Dazs" still matches the ASCII pattern "haagen". */
+function normalizeName(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase();
+}
+
+const EXCLUDED_NAME_RE = new RegExp(
+  `\\b(?:${EXCLUDED_NAME_PATTERNS.map((p) =>
+    p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  ).join("|")})\\b`,
+  "i"
+);
+
+/**
+ * Word-boundary matching, not substring: "jamba" must not match "jambalaya".
+ * A chain name that is a whole word inside a longer legitimate name still
+ * slips through — that is a false accept, which is the recoverable direction.
+ */
 export function isExcludedByName(name: string): boolean {
-  const n = name.toLowerCase();
-  return EXCLUDED_NAME_PATTERNS.some((p) => n.includes(p));
+  return EXCLUDED_NAME_RE.test(normalizeName(name));
 }
 
 function primaryName(names: { value: string; primary?: boolean }[] = []): string {
