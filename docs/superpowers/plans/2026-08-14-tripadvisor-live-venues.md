@@ -546,7 +546,7 @@ git commit -m "feat: add commute-radius and search-grid geometry"
 
 **Files:**
 - Create: `src/lib/tripadvisor.ts`
-- Create: `.env.example` entry (modify if the file exists, else create)
+- Modify: `.env` (declare `TRIPADVISOR_API_KEY`, empty)
 
 **Interfaces:**
 - Consumes: `parsePriceLevel` (Task 1)
@@ -557,16 +557,22 @@ git commit -m "feat: add commute-radius and search-grid geometry"
   - `nearbySearch(lat: number, lng: number, radiusKm: number): Promise<TaSearchHit[]>`
   - `locationDetails(locationId: string): Promise<TaDetails | null>`
 
-- [ ] **Step 1: Add the key to `.env.example`**
+- [ ] **Step 1: Declare the key in the committed `.env`**
 
-Append:
+There is no `.env.example` in this repo and one should not be created: the project already
+commits a `.env` carrying browser-safe defaults, and documents `.env.local` overrides in the
+README. A third place to describe environment variables would drift. Append to `.env`:
 
 ```
 # TripAdvisor Content API — https://www.tripadvisor.com/developers
-# Free tier: 5,000 calls/month. Requires a credit card at signup, and the key
-# must be restricted to an IPv4 address before it is issued. Server-only.
+# Free tier: 5,000 calls/month. A credit card is required at signup, and the key
+# is not issued until you restrict it to an IPv4 address or domain.
+# Server-only — never expose this as NEXT_PUBLIC_*. Set the real value in
+# .env.local, which is gitignored and overrides this file.
 TRIPADVISOR_API_KEY=
 ```
+
+Leave the value empty here. The real key belongs in `.env.local`.
 
 - [ ] **Step 2: Write the client**
 
@@ -731,7 +737,7 @@ Expected: `HTTP:200` and a `data` array of up to 10 restaurants. **If this retur
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/lib/tripadvisor.ts .env.example
+git add src/lib/tripadvisor.ts .env
 git commit -m "feat: add TripAdvisor Content API client"
 ```
 
