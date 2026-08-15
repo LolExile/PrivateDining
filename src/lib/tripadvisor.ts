@@ -1,8 +1,11 @@
 import { parsePriceLevel } from "./tripadvisor-parse";
 
-const BASE = "https://api.content.tripadvisor.com/api/v1";
-/** 24h. Protects the 5,000-call monthly budget; see the spec's caching note. */
+const BASE = "https://terra.tripadvisor.com/api";
 const REVALIDATE_SECONDS = 86_400;
+/** Terra's hard page ceiling. */
+const MAX_PAGE_SIZE = 20;
+/** Stop paging even if the quota is unfilled — every location billed. */
+const MAX_PAGES = 3;
 
 export class TripAdvisorError extends Error {
   constructor(
@@ -14,124 +17,163 @@ export class TripAdvisorError extends Error {
   }
 }
 
-export interface TaSearchHit {
-  location_id: string;
-  name: string;
-  distanceKm: number | null;
-}
-
-export interface TaDetails {
-  location_id: string;
+export interface TerraNearby {
+  id: string;
   name: string;
   address: string;
   city: string;
   lat: number;
   lng: number;
-  cuisine: string;
   rating: number | null;
   review_count: number | null;
-  price_tier: number | null;
+  ratingImageUrl: string | null;
+  taUrl: string | null;
+  website: string | null;
+  distanceKm: number | null;
+}
+
+export interface TerraDetails {
   phone: string | null;
   website: string | null;
-  ta_url: string | null;
-  ta_rating_image_url: string | null;
+  price_tier: number | null;
+  street_address: string | null;
+  rating: number | null;
+  review_count: number | null;
+  ratingImageUrl: string | null;
 }
 
 function apiKey(): string {
   const key = process.env.TRIPADVISOR_API_KEY;
-  if (!key) {
-    throw new TripAdvisorError("TRIPADVISOR_API_KEY is not set", 0);
-  }
+  if (!key) throw new TripAdvisorError("TRIPADVISOR_API_KEY is not set", 0);
   return key;
 }
 
-async function taFetch(path: string, params: Record<string, string>) {
+async function terra(path: string, params: Record<string, string>) {
   const url = new URL(`${BASE}${path}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  url.searchParams.set("key", apiKey());
-
   const res = await fetch(url, {
-    headers: { accept: "application/json" },
+    headers: { "X-API-Key": apiKey(), accept: "application/json" },
     next: { revalidate: REVALIDATE_SECONDS },
   });
-
   if (!res.ok) {
-    // 403 is overwhelmingly the IP allowlist, not a bad key — say so.
     const hint =
-      res.status === 403
-        ? "TripAdvisor rejected the key. Check that this server's public IPv4 is on the key's allowlist."
+      res.status === 401 || res.status === 403
+        ? "Tripadvisor rejected the key. Check TRIPADVISOR_API_KEY in .env.local."
         : await res.text().catch(() => res.statusText);
     throw new TripAdvisorError(hint, res.status);
   }
   return res.json();
 }
 
-const MILES_TO_KM = 1.609344;
+/** Terra's documented category filter is not applied; this is the reliable test. */
+export function isRestaurant(main: string | null | undefined): boolean {
+  return /\/Restaurant_Review/.test(main ?? "");
+}
 
-export async function nearbySearch(
+function primaryName(names: { value: string; primary?: boolean }[] = []): string {
+  return (names.find((n) => n.primary) ?? names[0])?.value ?? "";
+}
+
+interface RawNearby {
+  distance_kilometers?: number;
+  location: {
+    id: number | string;
+    names?: { value: string; primary?: boolean }[];
+    addresses?: { formatted?: string; city?: string }[];
+    coordinates?: { latitude?: number; longitude?: number };
+    overall_rating?: { rating?: number; count?: number; icon_url?: string };
+    urls?: { tripadvisor?: { main?: string }; official?: string };
+  };
+}
+
+/**
+ * Pages Terra's nearby catalog collecting restaurants. The documented
+ * `category=RESTAURANT` is validated but not applied, so every page is filtered
+ * client-side. Paging stops the moment `needed` restaurants are collected —
+ * every extra location in a response is a billable entity.
+ */
+export async function nearbyRestaurants(
   lat: number,
   lng: number,
-  radiusKm: number
-): Promise<TaSearchHit[]> {
-  const data = (await taFetch("/location/nearby_search", {
-    latLong: `${lat},${lng}`,
-    category: "restaurants",
-    radius: String(Math.max(1, Math.round(radiusKm))),
-    radiusUnit: "km",
-  })) as { data?: { location_id: string; name: string; distance?: string }[] };
+  radiusKm: number,
+  needed: number
+): Promise<TerraNearby[]> {
+  const out: TerraNearby[] = [];
+  for (let page = 1; page <= MAX_PAGES && out.length < needed; page++) {
+    const json = (await terra("/catalog/locations/nearby", {
+      lat: String(lat),
+      lon: String(lng),
+      radius: String(radiusKm),
+      unit: "KM",
+      size: String(MAX_PAGE_SIZE),
+      page: String(page),
+      sort: "distance,asc",
+    })) as { data?: RawNearby[] };
 
-  return (data.data ?? []).map((hit) => ({
-    location_id: String(hit.location_id),
-    name: hit.name,
-    // TripAdvisor reports distance in miles.
-    distanceKm: hit.distance ? Number(hit.distance) * MILES_TO_KM : null,
-  }));
+    const rows = json.data ?? [];
+    if (rows.length === 0) break;
+
+    for (const row of rows) {
+      const loc = row.location;
+      const main = loc?.urls?.tripadvisor?.main ?? null;
+      if (!isRestaurant(main)) continue;
+      const rLat = loc.coordinates?.latitude;
+      const rLng = loc.coordinates?.longitude;
+      if (!Number.isFinite(rLat) || !Number.isFinite(rLng)) continue;
+      out.push({
+        id: String(loc.id),
+        name: primaryName(loc.names),
+        address: loc.addresses?.[0]?.formatted ?? "",
+        city: loc.addresses?.[0]?.city ?? "",
+        lat: rLat as number,
+        lng: rLng as number,
+        rating: loc.overall_rating?.rating ?? null,
+        review_count: loc.overall_rating?.count ?? null,
+        ratingImageUrl: loc.overall_rating?.icon_url ?? null,
+        taUrl: main,
+        website: loc.urls?.official ?? null,
+        distanceKm: row.distance_kilometers ?? null,
+      });
+      if (out.length >= needed) break;
+    }
+  }
+  return out;
 }
 
 interface RawDetails {
-  location_id: string;
-  name: string;
-  latitude?: string;
-  longitude?: string;
-  address_obj?: { address_string?: string; city?: string };
-  rating?: string;
-  num_reviews?: string;
+  id?: number | string;
+  phone_numbers?: { value?: string }[];
+  addresses?: { street_address?: string }[];
   price_level?: string;
-  phone?: string;
-  website?: string;
-  web_url?: string;
-  rating_image_url?: string;
-  cuisine?: { name: string }[];
+  urls?: { official?: string };
+  traveler_ratings?: {
+    overall?: { rating?: number; count?: number; icon_url?: string };
+  };
 }
 
-/** Returns null when the listing has no usable coordinates. */
-export async function locationDetails(
-  locationId: string
-): Promise<TaDetails | null> {
-  const raw = (await taFetch(`/location/${locationId}/details`, {
-    language: "en",
-    currency: "USD",
-  })) as RawDetails;
-
-  const lat = Number(raw.latitude);
-  const lng = Number(raw.longitude);
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-
+export async function locationDetails(id: string): Promise<TerraDetails | null> {
+  const j = (await terra(`/locations/${id}`, {})) as RawDetails;
+  if (!j || j.id === undefined) return null;
   return {
-    location_id: String(raw.location_id),
-    name: raw.name,
-    address: raw.address_obj?.address_string ?? "",
-    city: raw.address_obj?.city ?? "",
-    lat,
-    lng,
-    cuisine: raw.cuisine?.[0]?.name ?? "Restaurant",
-    rating: raw.rating ? Number(raw.rating) : null,
-    review_count: raw.num_reviews ? Number(raw.num_reviews) : null,
-    price_tier: parsePriceLevel(raw.price_level),
-    phone: raw.phone ?? null,
-    // The restaurant's own site is a better menu link than the TA listing.
-    website: raw.website ?? null,
-    ta_url: raw.web_url ?? null,
-    ta_rating_image_url: raw.rating_image_url ?? null,
+    phone: j.phone_numbers?.[0]?.value ?? null,
+    website: j.urls?.official ?? null,
+    price_tier: parsePriceLevel(j.price_level),
+    street_address: j.addresses?.[0]?.street_address ?? null,
+    rating: j.traveler_ratings?.overall?.rating ?? null,
+    review_count: j.traveler_ratings?.overall?.count ?? null,
+    ratingImageUrl: j.traveler_ratings?.overall?.icon_url ?? null,
   };
+}
+
+interface RawPhotos {
+  data?: { photo?: { original_size_url?: string } }[];
+}
+
+/**
+ * First photo only. Reviews are deliberately never fetched: they cost billable
+ * entities and nothing in the app ranks on them.
+ */
+export async function locationPhoto(id: string): Promise<string | null> {
+  const j = (await terra(`/locations/${id}/photos`, { size: "1" })) as RawPhotos;
+  return j.data?.[0]?.photo?.original_size_url ?? null;
 }
