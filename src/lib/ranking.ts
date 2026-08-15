@@ -114,7 +114,7 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
     const bestRoom = pickBestRoom(venue, params.headcount, params.eventStyle);
     const bestCapacity = bestRoom
       ? relevantCapacity(bestRoom, params.eventStyle)
-      : 0;
+      : null;
     const capacityKnown = bestCapacity !== null;
     const capacityOk = capacityKnown && bestCapacity >= params.headcount;
     // Unknown capacity scores as unconfirmed, not as zero: the room may well
@@ -195,6 +195,8 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
       distanceMiles,
       commuteMinutes: commute,
       bestRoom,
+      bestCapacity,
+      capacityKnown,
       capacityOk,
       dietaryMissing,
       factors,

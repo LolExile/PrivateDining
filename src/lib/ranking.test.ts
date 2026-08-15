@@ -56,4 +56,26 @@ describe("rankVenues with unknown capacities", () => {
     });
     expect(rankVenues([v], params).results[0].bestRoom?.name).toBe("Salon");
   });
+
+  it("scores capacity as unconfirmed, not zero, for a venue with no rooms at all", () => {
+    const { results } = rankVenues([venue({ rooms: [] })], params);
+    expect(results[0].capacityOk).toBe(false);
+    expect(results[0].factors.find((f) => f.key === "capacity")?.score).toBe(0.5);
+    expect(results[0].factors.find((f) => f.key === "capacity")?.detail)
+      .toBe("No capacity data");
+  });
+
+  it("treats a room's standing capacity as irrelevant to a seated search", () => {
+    // seated search; the room states standing capacity but not seated —
+    // relevantCapacity for "seated" only looks at room.seated, so this must
+    // rank and report as unconfirmed, not as a room that holds 80 seated.
+    const { results } = rankVenues(
+      [venue({ rooms: [room({ name: "Lounge", seated: null, standing: 80 })] })],
+      params
+    );
+    expect(results[0].capacityOk).toBe(false);
+    expect(results[0].capacityKnown).toBe(false);
+    expect(results[0].factors.find((f) => f.key === "capacity")?.detail)
+      .toBe("Lounge — capacity unconfirmed");
+  });
 });

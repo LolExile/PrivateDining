@@ -81,6 +81,8 @@ export interface RankedVenue {
   distanceMiles: number;
   commuteMinutes: number;
   bestRoom: Room | null;
+  bestCapacity: number | null;
+  capacityKnown: boolean;
   capacityOk: boolean;
   dietaryMissing: string[];
   factors: FactorScore[];

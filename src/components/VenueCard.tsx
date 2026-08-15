@@ -32,7 +32,17 @@ export function VenueCard({
   onSelect,
   onPlan,
 }: VenueCardProps) {
-  const { venue, rank, commuteMinutes, distanceMiles, bestRoom, capacityOk, totalScore } = result;
+  const {
+    venue,
+    rank,
+    commuteMinutes,
+    distanceMiles,
+    bestRoom,
+    bestCapacity,
+    capacityKnown,
+    capacityOk,
+    totalScore,
+  } = result;
   const [expanded, setExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const top3 = rank <= 3;
@@ -111,15 +121,11 @@ export function VenueCard({
             >
               {capacityOk
                 ? `Fits ${headcount} ${eventStyle === "reception" ? "standing" : "seated"} — ${bestRoom?.name}`
-                : bestRoom && bestRoom.seated === null && bestRoom.standing === null
-                  ? `${bestRoom.name} — capacity unconfirmed`
-                  : `Largest space fits ${
-                      bestRoom
-                        ? eventStyle === "reception"
-                          ? Math.max(bestRoom.standing ?? 0, bestRoom.seated ?? 0)
-                          : (bestRoom.seated ?? 0)
-                        : 0
-                    } of ${headcount}`}
+                : !capacityKnown
+                  ? bestRoom
+                    ? `${bestRoom.name} — capacity unconfirmed`
+                    : "No capacity data"
+                  : `Largest space fits ${bestCapacity} of ${headcount}`}
             </span>
           </div>
           <FitLedger factors={result.factors} />
