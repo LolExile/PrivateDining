@@ -79,3 +79,37 @@ describe("rankVenues with unknown capacities", () => {
       .toBe("Lounge — capacity unconfirmed");
   });
 });
+
+describe("rankVenues with unconfirmed dietary", () => {
+  const vegParams: SearchParams = { ...params, dietary: ["vegetarian"] };
+
+  it("excludes a venue whose known dietary list lacks the request", () => {
+    const known = venue({ id: "known", dietary: ["vegan"], rooms: [room({ seated: 60 })] });
+    const { results, excludedByDietary } = rankVenues([known], vegParams);
+    expect(results).toHaveLength(0);
+    expect(excludedByDietary).toBe(1);
+  });
+
+  it("keeps a venue with no dietary data and flags it unconfirmed", () => {
+    const live = venue({ id: "live", dietary: [], rooms: [room({ seated: 60 })] });
+    const { results, excludedByDietary } = rankVenues([live], vegParams);
+    expect(results).toHaveLength(1);
+    expect(results[0].dietaryUnconfirmed).toBe(true);
+    expect(results[0].dietaryMissing).toEqual(["vegetarian"]);
+    expect(excludedByDietary).toBe(0);
+  });
+
+  it("keeps a venue that genuinely accommodates, unflagged", () => {
+    const ok = venue({ id: "ok", dietary: ["vegetarian"], rooms: [room({ seated: 60 })] });
+    const { results } = rankVenues([ok], vegParams);
+    expect(results).toHaveLength(1);
+    expect(results[0].dietaryUnconfirmed).toBe(false);
+    expect(results[0].dietaryMissing).toEqual([]);
+  });
+
+  it("flags nothing when no dietary need was requested", () => {
+    const live = venue({ id: "live", dietary: [], rooms: [room({ seated: 60 })] });
+    const { results } = rankVenues([live], params);
+    expect(results[0].dietaryUnconfirmed).toBe(false);
+  });
+});

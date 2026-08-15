@@ -86,13 +86,20 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
       continue;
     }
 
+    // Unknown dietary data is unconfirmed, not disqualifying — the same rule
+    // capacity follows. A venue with a curated list that lacks a requested tag
+    // is genuinely excluded; a live venue with no list at all is kept and
+    // flagged, because TripAdvisor supplies no dietary data and excluding on
+    // its absence would empty the results whenever any box is ticked.
+    const dietaryKnown = venue.dietary.length > 0;
     const dietaryMissing = params.dietary.filter(
       (d) => !venue.dietary.includes(d)
     );
-    if (dietaryMissing.length > 0) {
+    if (dietaryKnown && dietaryMissing.length > 0) {
       excludedByDietary++;
       continue;
     }
+    const dietaryUnconfirmed = !dietaryKnown && params.dietary.length > 0;
 
     const factors: FactorScore[] = [];
     const cuisineMatch = params.cuisine
@@ -199,6 +206,7 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
       capacityKnown,
       capacityOk,
       dietaryMissing,
+      dietaryUnconfirmed,
       factors,
     });
   }

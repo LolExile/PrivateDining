@@ -85,6 +85,8 @@ export interface RankedVenue {
   capacityKnown: boolean;
   capacityOk: boolean;
   dietaryMissing: string[];
+  /** User asked for dietary accommodations and this venue has no dietary data. */
+  dietaryUnconfirmed: boolean;
   factors: FactorScore[];
 }
 

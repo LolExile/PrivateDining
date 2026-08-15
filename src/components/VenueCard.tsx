@@ -186,6 +186,24 @@ export function VenueCard({
             </>
           )}
 
+          {result.dietaryUnconfirmed && (
+            <>
+              <h4 className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                Dietary accommodations
+              </h4>
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {result.dietaryMissing.map((d) => (
+                  <span
+                    key={d}
+                    className="rounded-full bg-claret-soft px-2 py-0.5 text-[11px] font-medium text-claret"
+                  >
+                    {DIETARY_LABELS[d] ?? d}: unconfirmed — confirm by phone
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
+
           <div className="mb-3">
             <div className="flex items-center gap-3">
               <h4 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-soft">
