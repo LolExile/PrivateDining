@@ -825,6 +825,152 @@ git commit -m "feat: point the scripts at Terra, extract cuisine, update the REA
 
 ---
 
+### Task 21: Private-dining enrichment — path probing, then domain-restricted search
+
+TripAdvisor supplies no private-dining data at all. Today the extractor reads only the
+restaurant's own site via `urls.official`, and gives up when that site has no obvious events
+page. This task widens the net in two stages, cheapest first.
+
+**Files:**
+- Modify: `scripts/extract-capacity.ts`
+- Modify: `src/lib/capacity-guard.ts` (a source-ranking helper only — do **not** touch
+  `acceptRoomBlock`, which took three fix rounds to get right)
+
+**Interfaces:**
+- Consumes: `acceptRoomBlock`, `confidenceFor` (unchanged)
+- Produces: `confidenceForSource(source, rooms)` — see Step 3
+
+- [ ] **Step 1: Probe the obvious paths on the restaurant's own domain (free)**
+
+When the homepage yields no events link, try the conventional paths directly before doing
+anything that costs money:
+
+```ts
+const EVENT_PATHS = [
+  "/private-dining",
+  "/private-events",
+  "/events",
+  "/parties",
+  "/banquets",
+  "/groups",
+  "/group-dining",
+];
+
+/** Cheapest source of truth: the restaurant's own site, guessed by convention. */
+async function probeEventPaths(homepage: string): Promise<string | null> {
+  const origin = new URL(homepage).origin;
+  for (const path of EVENT_PATHS) {
+    const url = `${origin}${path}`;
+    try {
+      const res = await fetch(url, {
+        method: "GET",
+        headers: { "user-agent": "PrivateDiningFinder/1.0 (+research tool)" },
+        redirect: "follow",
+      });
+      if (res.ok && (res.headers.get("content-type") ?? "").includes("text/html")) {
+        return res.url;
+      }
+    } catch {
+      // Unreachable path — try the next.
+    }
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  return null;
+}
+```
+
+Call it only after the existing homepage-link search fails.
+
+- [ ] **Step 2: Domain-restricted web search as the last resort**
+
+Only when both the homepage link and the path probes come up empty. Use Anthropic's server-side
+web search inside the same Claude call, restricted to sources that actually carry capacity data:
+
+```ts
+const ENRICHMENT_DOMAINS = [
+  "opentable.com",
+  "partyslate.com",
+  "eventup.com",
+  "tripleseat.com",
+];
+
+const searchTool = {
+  type: "web_search_20260209" as const,
+  name: "web_search" as const,
+  max_uses: 3,
+  allowed_domains: [...ENRICHMENT_DOMAINS, new URL(homepage).hostname],
+};
+```
+
+Restricting the domains is the point: unrestricted search returns listicles that name a chain
+without saying which branch, which is precisely the attribution failure the location guard
+exists to catch.
+
+**Verify compatibility before relying on it.** Structured outputs (`output_config.format`) and
+server tools that emit citations may not compose — the API rejects `output_config.format`
+alongside citations. Try the single call first; if the API rejects it, fall back to two calls:
+one search call that returns prose, then a second `messages.parse()` extraction over that prose.
+Report which shape actually worked, with the error if the first failed.
+
+- [ ] **Step 3: Rank confidence by source**
+
+A branch-specific OpenTable page stating a number is far stronger evidence than a blog. Add to
+`src/lib/capacity-guard.ts` — a new function, leaving `acceptRoomBlock` untouched:
+
+```ts
+export type CapacitySource = "own-site" | "directory" | "search";
+
+/**
+ * Extracted capacity is only as trustworthy as where it came from. The
+ * restaurant's own site and a branch-specific directory listing with real
+ * numbers earn "likely"; anything else stays "unverified" and the card tells
+ * the planner to call. Search results are the weakest source and never
+ * upgrade a venue on their own.
+ */
+export function confidenceForSource(
+  source: CapacitySource,
+  rooms: { seated: number | null; standing: number | null }[]
+): "likely" | "unverified" {
+  const hasNumber = rooms.some((r) => r.seated !== null || r.standing !== null);
+  if (!hasNumber) return "unverified";
+  return source === "search" ? "unverified" : "likely";
+}
+```
+
+Thread the source through the extractor and use it in place of the bare `confidenceFor` when
+writing to `venue_capacity`. Always store the `source_url` actually used.
+
+- [ ] **Step 4: The location guard still applies, and matters more here**
+
+Every extracted block continues through `acceptRoomBlock`. This is not optional and not
+duplicated effort: a single OpenTable search for "Havana Central Times Square private dining"
+returns the Roosevelt Field Mall and Ridge Hill branches alongside the right one, each with its
+own rooms and capacities. Attributing another branch's rooms is the exact failure this whole
+guard exists to prevent.
+
+When the source is a branch-specific URL, pass the branch identifier from the slug as the
+block's `location_match` so the guard can act on it.
+
+- [ ] **Step 5: Verify on a real venue**
+
+Run the extractor against the TripAdvisor location id for **Havana Central Times Square**, which
+is known to have OpenTable private-dining data (a mezzanine for up to 100, plus a Glass Room and
+VIP Space for 20–30).
+
+Report verbatim: which source tier produced the data, the rooms extracted with their capacities,
+the confidence assigned, how many blocks the location guard rejected, and — critically — whether
+any Roosevelt Field Mall or Ridge Hill room made it through. A room from another branch
+appearing in the output is a failure, not a partial success.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add scripts/extract-capacity.ts src/lib/capacity-guard.ts src/lib/capacity-guard.test.ts
+git commit -m "feat: probe event pages, then domain-restricted search, for private dining"
+```
+
+---
+
 ## Verification checklist
 
 - [ ] `npm test`, `npm run build`, `npx eslint` all clean
