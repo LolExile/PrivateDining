@@ -21,8 +21,8 @@ Two changes are wanted:
 
 The obstacle is that **TripAdvisor has no private-dining data** — no rooms, no seated or standing
 capacities, no minimum spend, no group-sales contact. Those fields carry 35 of the 100 ranking
-points in `src/lib/ranking.ts` (capacity 25, private rooms 10) plus the price signal. A purely live
-catalog would strip the app of the thing that makes it a private-dining finder.
+points in `src/lib/ranking.ts` — capacity 25, private rooms 10. A purely live catalog would strip
+the app of the thing that makes it a private-dining finder.
 
 ## 2. Goals
 
@@ -107,9 +107,17 @@ they never overwrite a field owned by an earlier row.
 | Source | Owns | Trust label |
 |---|---|---|
 | TripAdvisor `/details` | `name`, `address`, `lat`/`lng`, `rating`, `review_count`, `price_tier`, `contact.phone`, `menu_url` (from `website`), `ta_url`, `ta_rating_image_url`, `cuisine` | — |
-| `src/data/overlay.json` (curated) | `rooms`, `min_spend`, `price_trust`, `contact`, `event_styles`, `dietary`, `menu_highlights`, `description` | `verified` |
-| `venue_capacity` table (extracted) | `rooms`, `min_spend`, `capacity_source_url` — **only when no overlay entry exists** | `likely` |
-| neither | `rooms: []`, `min_spend: null` | `unverified` → renders as "needs a call" |
+| `src/data/overlay.json` (curated) | `rooms`, `contact`, `event_styles`, `dietary`, `menu_highlights`, `description` | `verified` |
+| `venue_capacity` table (extracted) | `rooms`, `capacity_source_url` — **only when no overlay entry exists** | `likely` |
+| neither | `rooms: []` | `unverified` → renders as "needs a call" |
+
+**Price is TripAdvisor's `price_level` tier and nothing else.** The curated
+minimum spend and its separate `price_trust` label are both dropped: with every
+venue's price coming from the same source, a per-venue price-trust label would
+read identically on every card, and a minimum spend extracted from a marketing
+page was the least reliable field in the extraction. `Venue.min_spend` and
+`Venue.price_trust` are removed from the type; the price factor scores on
+whether a tier is known.
 
 This maps onto the trust model already in the app rather than bolting a new concept on: a live
 listing with unknown capacity genuinely *is* "needs a call".
@@ -135,8 +143,8 @@ has no overlay entry for. Per venue:
    `/private|events|parties|group|banquet/i`. Respect `robots.txt`; one request per host per
    second; abandon the venue on any non-200.
 3. Extract with `client.messages.parse()` against a Zod schema — rooms (`name`, `seated`,
-   `standing`, `notes`), `min_spend`, and a `location_match` field naming the city/address the
-   page attributes each room block to.
+   `standing`, `notes`) and a `location_match` field naming the city/address the page
+   attributes each room block to.
 4. **Discard any room block whose `location_match` does not match the venue's city or street.**
 5. Write to `venue_capacity` with `source_url` and `extracted_at`.
 
@@ -179,7 +187,7 @@ posture is wanted, 1h is a one-line change that costs roughly 12× the call volu
 3. **Drop the `venue_id` foreign key**, keeping `venue_ta_id` as an unenforced reference.
 4. **Drop `private_rooms`, then `venues`.**
 5. **Create `venue_capacity`** — `ta_location_id text primary key`, `rooms jsonb not null default
-   '[]'`, `min_spend integer`, `source_url text`, `confidence text check (confidence in
+   '[]'`, `source_url text`, `confidence text check (confidence in
    ('likely','unverified'))`, `extracted_at timestamptz not null default now()`. RLS: readable by
    `anon`; writes restricted to the service role, since only the extractor writes.
 
@@ -206,7 +214,10 @@ capacity. This ripples into two functions in `src/lib/ranking.ts`:
 
 A venue whose only rooms have unknown capacity scores as capacity-unknown (partial credit,
 `0.5 × WEIGHTS.capacity`), not capacity-zero — it plausibly fits, it just hasn't been confirmed.
-`Venue` also gains `ta_url`, `ta_rating_image_url`, and `capacity_source_url`, all nullable.
+
+`Venue` gains `ta_location_id`, `ta_url`, `ta_rating_image_url`, and `capacity_source_url`, all
+nullable, and loses `min_spend` and `price_trust` per §6. `PriceSignal` in `Badges.tsx` and the
+price factor in `ranking.ts` both read the tier alone.
 
 ## 10. Attribution
 
