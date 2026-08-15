@@ -17,19 +17,27 @@ const MAX_CANDIDATES = 45;
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const lat = Number(url.searchParams.get("lat"));
-  const lng = Number(url.searchParams.get("lng"));
-  const minutes = Number(url.searchParams.get("minutes"));
+  const num = (key: string): number => {
+    const raw = url.searchParams.get(key);
+    return raw === null || raw.trim() === "" ? Number.NaN : Number(raw);
+  };
+  const lat = num("lat");
+  const lng = num("lng");
+  const minutes = num("minutes");
   const mode = (url.searchParams.get("mode") ?? "walking") as CommuteMode;
 
   if (
     !Number.isFinite(lat) ||
     !Number.isFinite(lng) ||
     !Number.isFinite(minutes) ||
-    Math.abs(lat) > 89.9
+    Math.abs(lat) > 89.9 ||
+    minutes <= 0
   ) {
     return NextResponse.json(
-      { error: "lat, lng and minutes are required, and lat must be a real latitude" },
+      {
+        error:
+          "lat, lng and minutes are required; lat must be a real latitude and minutes must be positive",
+      },
       { status: 400 }
     );
   }
@@ -46,9 +54,22 @@ export async function GET(request: Request) {
 
   try {
     const grid = searchGrid(lat, lng, radiusKm);
-    const hits = (await Promise.all(
-      grid.map((p) => nearbySearch(p.lat, p.lng, radiusKm).catch(() => []))
-    )).flat();
+    const settled = await Promise.all(
+      grid.map((p) =>
+        nearbySearch(p.lat, p.lng, radiusKm).then(
+          (hits) => ({ ok: true as const, hits }),
+          (error: unknown) => ({ ok: false as const, error })
+        )
+      )
+    );
+    const hits = settled.flatMap((r) => (r.ok ? r.hits : []));
+    // One flaky grid point is tolerable. Every point failing is systemic — a
+    // bad key, an IP not on the allowlist, exhausted quota — and must surface
+    // as the overlay fallback with its notice, not as a silent "0 venues".
+    const failure = settled.find((r) => !r.ok);
+    if (hits.length === 0 && failure && !failure.ok) {
+      throw failure.error;
+    }
 
     const byId = new Map<string, number>();
     for (const hit of hits) {
