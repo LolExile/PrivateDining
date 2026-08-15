@@ -162,8 +162,9 @@ export function ReservationModal({ venue, params, onClose, onSaved }: Reservatio
             </span>
             <p className="font-display text-[18px] font-semibold text-ink">Plan saved</p>
             <p className="max-w-xs text-[13px] text-ink-soft">
-              The dinner and its attendees are stored. Find it any time under Saved plans, and
-              reuse these attendee profiles for your next event.
+              This is a plan only — no reservation has been made and the restaurant has not
+              been contacted. Find it any time under Saved plans, and reuse these attendee
+              profiles for your next event.
             </p>
             <button
               type="button"

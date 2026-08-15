@@ -32,10 +32,10 @@ export default function Home() {
   const [plansRefresh, setPlansRefresh] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const cuisines = useMemo(() => {
-    const live = venues.map((v) => v.cuisine);
-    return [...new Set(live.length > 0 ? live : ["Italian", "American", "Japanese"])].sort();
-  }, [venues]);
+  const cuisines = useMemo(
+    () => [...new Set(venues.map((v) => v.cuisine).filter(Boolean))].sort(),
+    [venues]
+  );
 
   const search = async (values: SearchFormValues) => {
     setBusy(true);
@@ -78,6 +78,7 @@ export default function Home() {
       setSelectedId(null);
       listRef.current?.scrollTo({ top: 0 });
     } catch (e) {
+      setNotice(null);
       setSearchError((e as Error).message);
     } finally {
       setBusy(false);
@@ -91,7 +92,9 @@ export default function Home() {
       ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
-  const results = ranked?.results ?? [];
+  const MAX_RESULTS = 10;
+  const allResults = ranked?.results ?? [];
+  const results = allResults.slice(0, MAX_RESULTS);
   const top = results.slice(0, 3);
   const rest = results.slice(3);
 
@@ -144,7 +147,9 @@ export default function Home() {
               )}
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="font-display text-[16px] font-semibold text-ink">
-                  {results.length} venue{results.length === 1 ? "" : "s"} found
+                  {allResults.length > MAX_RESULTS
+                    ? `Top ${MAX_RESULTS} of ${allResults.length} venues found`
+                    : `${allResults.length} venue${allResults.length === 1 ? "" : "s"} found`}
                 </h2>
                 <span className="font-data text-[11px] text-ink-soft">
                   {params.commuteMode} · ≤{params.maxCommuteMinutes} min

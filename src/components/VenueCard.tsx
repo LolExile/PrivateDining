@@ -103,7 +103,7 @@ export function VenueCard({
               <span className="font-data text-[12px] font-medium text-ink">
                 {formatMiles(distanceMiles)} · {formatMinutes(commuteMinutes)} {commuteMode}
               </span>
-              <Stars rating={venue.rating} />
+              <Stars rating={venue.rating} bubbleUrl={venue.ta_rating_image_url} />
             </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="rounded bg-sage px-1.5 py-0.5 text-[11px] font-semibold text-bottle-deep">
@@ -111,6 +111,17 @@ export function VenueCard({
               </span>
               <TrustBadge label={venue.trust_label} />
               <PriceSignal venue={venue} />
+              {venue.ta_url && (
+                <a
+                  href={venue.ta_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-[11px] text-ink-soft underline"
+                >
+                  View on Tripadvisor
+                </a>
+              )}
             </div>
           </div>
         </div>

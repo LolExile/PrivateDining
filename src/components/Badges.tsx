@@ -45,13 +45,35 @@ export function PriceSignal({ venue }: { venue: Venue }) {
   );
 }
 
-export function Stars({ rating }: { rating: number | null }) {
+export function Stars({
+  rating,
+  bubbleUrl,
+}: {
+  rating: number | null;
+  bubbleUrl?: string | null;
+}) {
   if (rating === null) {
     return <span className="text-[12px] text-ink-soft">No rating</span>;
   }
+  if (bubbleUrl) {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={bubbleUrl}
+          alt={`${rating.toFixed(1)} of 5 bubbles`}
+          className="h-[14px] w-auto"
+          loading="lazy"
+        />
+        <span className="font-data text-[12px] font-medium text-ink">
+          {rating.toFixed(1)}
+        </span>
+      </span>
+    );
+  }
   const pct = Math.max(0, Math.min(100, (rating / 5) * 100));
   return (
-    <span className="inline-flex items-center gap-1.5" title={`${rating.toFixed(1)} stars (Yelp)`}>
+    <span className="inline-flex items-center gap-1.5" title={`${rating.toFixed(1)} stars`}>
       <span className="relative inline-block text-[13px] leading-none tracking-[1px]">
         <span className="text-hairline">★★★★★</span>
         <span
