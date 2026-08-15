@@ -31,7 +31,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="h-full">{children}</body>
+      {/*
+        suppressHydrationWarning: browser extensions commonly mutate <body>
+        before React hydrates — the observed case adds style="isolation:isolate"
+        to create a stacking context for their own injected UI. Nothing in this
+        app sets a style on <body>, so the mismatch is never ours. This
+        suppresses warnings for <body>'s own attributes only, one level deep;
+        mismatches inside the app tree still surface normally.
+      */}
+      <body className="h-full" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
