@@ -63,9 +63,11 @@ export function acceptRoomBlock(
     const aliases = CITYWIDE_ALIASES[city] ?? [];
     const cityNamed = Boolean(city) && claim.includes(city);
     const aliasNamed = aliases.some((a) => claim.includes(a));
-    // "Times Square" on its own, with nothing else in the claim, is a
-    // single-location page naming its own room area — trust it.
-    const nothingElseNamed = claim.replace(own, "").trim().length <= 3;
+    // Nothing but punctuation or whitespace left once the neighbourhood is
+    // removed — a single-location page naming its own room area. A length
+    // threshold is not enough here: "Midtown, ATL" leaves "atl", and city
+    // abbreviations are exactly how a multi-location group labels branches.
+    const nothingElseNamed = !/[a-z0-9]/.test(claim.replace(own, ""));
     if (cityNamed || aliasNamed || nothingElseNamed) return true;
     // The neighbourhood matches but the claim also carries locality text that
     // is neither our city nor one of its aliases — it may be another city's

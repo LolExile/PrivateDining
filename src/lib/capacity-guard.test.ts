@@ -93,6 +93,20 @@ describe("acceptRoomBlock", () => {
       midtownNy
     )).toBe(true);
   });
+
+  it("rejects a short city abbreviation after its own neighbourhood", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Salon", seated: 40, location_match: "Midtown, ATL" }),
+      midtownNy
+    )).toBe(false);
+  });
+
+  it("rejects a two-letter city abbreviation after its own neighbourhood", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Salon", seated: 40, location_match: "Midtown, LA" }),
+      midtownNy
+    )).toBe(false);
+  });
 });
 
 describe("confidenceFor", () => {
