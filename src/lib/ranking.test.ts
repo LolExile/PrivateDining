@@ -113,3 +113,15 @@ describe("rankVenues with unconfirmed dietary", () => {
     expect(results[0].dietaryUnconfirmed).toBe(false);
   });
 });
+
+describe("rankVenues cuisine", () => {
+  it("does not rank on cuisine", () => {
+    const a = venue({ id: "a", cuisine: "Italian", rooms: [room({ seated: 60 })] });
+    const b = venue({ id: "b", cuisine: "Thai", rooms: [room({ seated: 60 })] });
+    const withCuisine = rankVenues([b, a], { ...params, cuisine: "Italian" });
+    const without = rankVenues([b, a], params);
+    expect(withCuisine.results.map((r) => r.venue.id)).toEqual(
+      without.results.map((r) => r.venue.id)
+    );
+  });
+});

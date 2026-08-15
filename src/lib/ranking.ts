@@ -15,17 +15,16 @@ import type {
 import { DIETARY_LABELS } from "./types";
 
 /**
- * Ranking weights, in the planner's stated order of importance:
- * cuisine (when chosen) > capacity > commute > private rooms > price > trust.
- * Cuisine additionally hard-sorts matches above non-matches.
+ * Cuisine left the ranker when the app moved to Terra, which supplies no
+ * cuisine field. Its 35 points were redistributed proportionally so the
+ * remaining factors keep their original relative importance.
  */
 const WEIGHTS = {
-  cuisine: 35,
-  capacity: 25,
-  commute: 20,
-  rooms: 10,
-  price: 6,
-  trust: 4,
+  capacity: 38,
+  commute: 31,
+  rooms: 15,
+  price: 9,
+  trust: 7,
 };
 
 const TRUST_SCORE: Record<TrustLabel, number> = {
@@ -102,21 +101,12 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
     const dietaryUnconfirmed = !dietaryKnown && params.dietary.length > 0;
 
     const factors: FactorScore[] = [];
+    // Cuisine no longer scores or sorts — Terra supplies no cuisine field,
+    // so every live venue would match identically — but the card still
+    // shows whether a venue matches the chosen cuisine.
     const cuisineMatch = params.cuisine
       ? venue.cuisine.toLowerCase() === params.cuisine.toLowerCase()
       : false;
-
-    if (params.cuisine) {
-      factors.push({
-        key: "cuisine",
-        label: "Cuisine",
-        score: cuisineMatch ? 1 : 0,
-        weight: WEIGHTS.cuisine,
-        detail: cuisineMatch
-          ? `Matches ${venue.cuisine}`
-          : `${venue.cuisine}, not ${params.cuisine}`,
-      });
-    }
 
     const bestRoom = pickBestRoom(venue, params.headcount, params.eventStyle);
     const bestCapacity = bestRoom
@@ -211,13 +201,7 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
     });
   }
 
-  // Cuisine matches always outrank non-matches when a cuisine is chosen.
-  scored.sort((a, b) => {
-    if (params.cuisine && a.cuisineMatch !== b.cuisineMatch) {
-      return a.cuisineMatch ? -1 : 1;
-    }
-    return b.totalScore - a.totalScore;
-  });
+  scored.sort((a, b) => b.totalScore - a.totalScore);
 
   return {
     results: scored.map((s, i) => ({ ...s, rank: i + 1 })),
