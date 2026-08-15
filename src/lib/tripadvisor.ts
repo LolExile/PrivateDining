@@ -90,6 +90,52 @@ export function isPlausibleVenue(
   return rating >= MIN_RATING && reviewCount >= MIN_REVIEWS;
 }
 
+/**
+ * The owner wants dining experiences, not fast food. Terra's own price_level
+ * puts fast food in "Cheap Eats" (tier 1), so excluding that tier is a
+ * principled filter rather than a taste judgement. A null tier is allowed
+ * through: Terra simply has not classified the venue, and discarding every
+ * unclassified restaurant would lose real ones.
+ */
+export function isDiningExperience(priceTier: number | null): boolean {
+  return priceTier !== 1;
+}
+
+/**
+ * Applied to nearby results before any details call, so excluded venues cost
+ * nothing beyond the page they arrived on. Substring matching on a normalised
+ * name: crude, but the alternative is paying for a details call on every
+ * Dunkin' in the radius. Terra offers no category or cuisine field to do this
+ * properly — its documented category filter is accepted and ignored.
+ */
+const EXCLUDED_NAME_PATTERNS = [
+  // Fast food
+  "mcdonald", "burger king", "kfc", "kentucky fried", "popeyes", "taco bell",
+  "wendy", "subway", "chipotle", "shake shack", "in-n-out", "in n out",
+  "raising cane", "five guys", "chick-fil-a", "chick fil a", "domino",
+  "papa john", "pizza hut", "little caesar", "arby", "sonic drive",
+  "jack in the box", "whataburger", "white castle", "del taco",
+  "panda express", "jimmy john", "firehouse subs", "potbelly", "sbarro",
+  "quiznos", "checkers", "el pollo loco",
+  // Coffee and drinks
+  "starbucks", "dunkin", "tim horton", "peet's coffee", "caribou coffee",
+  "costa coffee", "boba", "bubble tea", "gong cha", "kung fu tea", "chatime",
+  "coco fresh", "tiger sugar", "sharetea", "happy lemon", "jamba",
+  "smoothie king", "juice bar",
+  // Dessert
+  "haagen", "häagen", "ben & jerry", "baskin", "cold stone", "dairy queen",
+  "krispy kreme", "cinnabon", "insomnia cookies", "crumbl", "gelato",
+  "ice cream", "frozen yogurt", "froyo", "donut", "doughnut", "cupcake",
+  "macaron", "candy", "chocolatier",
+  // Not a dining venue at all
+  "concession", "food court", "kiosk",
+];
+
+export function isExcludedByName(name: string): boolean {
+  const n = name.toLowerCase();
+  return EXCLUDED_NAME_PATTERNS.some((p) => n.includes(p));
+}
+
 function primaryName(names: { value: string; primary?: boolean }[] = []): string {
   return (names.find((n) => n.primary) ?? names[0])?.value ?? "";
 }
@@ -140,12 +186,14 @@ export async function nearbyRestaurants(
       const rating = loc.overall_rating?.rating ?? null;
       const review_count = loc.overall_rating?.count ?? null;
       if (!isPlausibleVenue(rating, review_count)) continue;
+      const name = primaryName(loc.names);
+      if (isExcludedByName(name)) continue;
       const rLat = loc.coordinates?.latitude;
       const rLng = loc.coordinates?.longitude;
       if (!Number.isFinite(rLat) || !Number.isFinite(rLng)) continue;
       out.push({
         id: String(loc.id),
-        name: primaryName(loc.names),
+        name,
         address: loc.addresses?.[0]?.formatted ?? "",
         city: loc.addresses?.[0]?.city ?? "",
         lat: rLat as number,

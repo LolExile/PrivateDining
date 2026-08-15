@@ -4,15 +4,27 @@ import { loadCapacity } from "@/lib/capacity-cache";
 import { mergeVenue } from "@/lib/merge-venue";
 import { overlayByLocationId } from "@/lib/overlay";
 import {
+  isDiningExperience,
   locationDetails,
   locationPhoto,
   nearbyRestaurants,
   TripAdvisorError,
+  type TerraDetails,
+  type TerraNearby,
 } from "@/lib/tripadvisor";
 import type { CommuteMode, Venue } from "@/lib/types";
 
 /** The owner's requirement: ten restaurants, not twenty. */
 const MAX_RESULTS = 10;
+/**
+ * The dining-experience filter needs a details call to see price_level, so
+ * the route can no longer fetch details for exactly the venues it will show.
+ * Oversample the nearby pool so there is room for candidates the price
+ * filter rejects.
+ */
+const CANDIDATE_POOL = Math.round(MAX_RESULTS * 2.5);
+/** Stop paying for details calls even if a thin neighbourhood never fills 10. */
+const MAX_DETAILS_ATTEMPTS = 30;
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -45,20 +57,33 @@ export async function GET(request: Request) {
   const overlay = overlayByLocationId();
 
   try {
-    const found = await nearbyRestaurants(lat, lng, radiusKm, MAX_RESULTS);
+    const found = await nearbyRestaurants(lat, lng, radiusKm, CANDIDATE_POOL);
     const inRadius = found.filter(
       (r) => haversineKm(lat, lng, r.lat, r.lng) <= radiusKm
     );
 
-    // One details call and one photo call per surviving restaurant. Both are
-    // billable per location, so they run only for venues that will be shown.
+    // Nearest-first, fetch details and keep only venues that pass the
+    // dining-experience price filter (excludes "Cheap Eats"), stopping the
+    // moment MAX_RESULTS are kept. Capped at MAX_DETAILS_ATTEMPTS so a thin
+    // neighbourhood cannot run away with the details budget.
+    const kept: (TerraNearby & Partial<TerraDetails>)[] = [];
+    let detailsAttempts = 0;
+    for (const r of inRadius) {
+      if (kept.length >= MAX_RESULTS || detailsAttempts >= MAX_DETAILS_ATTEMPTS) {
+        break;
+      }
+      detailsAttempts++;
+      const details = await locationDetails(r.id).catch(() => null);
+      if (!isDiningExperience(details?.price_tier ?? null)) continue;
+      kept.push({ ...r, ...(details ?? {}) });
+    }
+
+    // Photos only for the final kept list — rejected candidates never cost a
+    // photo call.
     const enriched = await Promise.all(
-      inRadius.map(async (r) => {
-        const [details, photo] = await Promise.all([
-          locationDetails(r.id).catch(() => null),
-          locationPhoto(r.id).catch(() => null),
-        ]);
-        return { ...r, ...(details ?? {}), image_url: photo };
+      kept.map(async (r) => {
+        const photo = await locationPhoto(r.id).catch(() => null);
+        return { ...r, image_url: photo };
       })
     );
 

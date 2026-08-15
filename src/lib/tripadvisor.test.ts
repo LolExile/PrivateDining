@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { isPlausibleVenue, isRestaurant } from "./tripadvisor";
+import {
+  isDiningExperience,
+  isExcludedByName,
+  isPlausibleVenue,
+  isRestaurant,
+} from "./tripadvisor";
 
 describe("isRestaurant", () => {
   it("accepts a restaurant review URL", () => {
@@ -44,5 +49,40 @@ describe("isPlausibleVenue", () => {
 
   it("rejects a null review count", () => {
     expect(isPlausibleVenue(4.5, null)).toBe(false);
+  });
+});
+
+describe("isDiningExperience", () => {
+  it("rejects Cheap Eats (tier 1)", () => {
+    expect(isDiningExperience(1)).toBe(false);
+  });
+
+  it("accepts Mid Range (tier 2)", () => {
+    expect(isDiningExperience(2)).toBe(true);
+  });
+
+  it("accepts Fine Dining (tier 4)", () => {
+    expect(isDiningExperience(4)).toBe(true);
+  });
+
+  it("accepts a null tier rather than discarding an unclassified venue", () => {
+    expect(isDiningExperience(null)).toBe(true);
+  });
+});
+
+describe("isExcludedByName", () => {
+  it("rejects fast food, coffee and dessert chains", () => {
+    expect(isExcludedByName("McDonald's")).toBe(true);
+    expect(isExcludedByName("Raising Cane's Chicken Fingers")).toBe(true);
+    expect(isExcludedByName("Starbucks - #1535 BRDWY")).toBe(true);
+    expect(isExcludedByName("Häagen-Dazs")).toBe(true);
+    expect(isExcludedByName("I'm Donut ?")).toBe(true);
+    expect(isExcludedByName("Sandbar Concessions Inc")).toBe(true);
+  });
+
+  it("accepts genuine dining venues", () => {
+    expect(isExcludedByName("Carmine's Italian Restaurant")).toBe(false);
+    expect(isExcludedByName("Keens Steakhouse")).toBe(false);
+    expect(isExcludedByName("Le Bernardin")).toBe(false);
   });
 });
