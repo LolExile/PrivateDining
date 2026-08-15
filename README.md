@@ -84,6 +84,9 @@ saving all work immediately.
 | `node scripts/match-overlay.mjs` | Match curated venues to Tripadvisor location ids and rebuild `src/data/overlay.json` |
 | `npm run extract-capacity` | Extract private-dining capacity and cuisine from a venue's own website |
 
+`scripts/` is excluded from the app's `next build` typecheck — it's Node tooling, run via `tsx`
+(which type-checks it itself on each run), not app code bundled into the Next.js build.
+
 ### Editing venue data
 
 `src/data/overlay.json` is the single source of truth for curated private-dining data — rooms,
@@ -108,6 +111,11 @@ before running repeated searches or the extraction script over many venues.
 
 Tripadvisor's legacy Content API (`api.content.tripadvisor.com`), which this app used before the
 Terra migration, **sunsets on 2026-08-31**. Terra is the only supported path going forward.
+
+**Before running `npm run extract-capacity`:** it needs `ANTHROPIC_API_KEY` and
+`SUPABASE_SERVICE_ROLE_KEY` in `.env.local`; neither is currently set. `@anthropic-ai/sdk` and
+`tsx` are declared in `package.json` and `package-lock.json`; if a fresh `node_modules` is
+missing them, run `npm install` once to fetch them.
 
 ## How it works
 

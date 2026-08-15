@@ -125,12 +125,12 @@ const EXCLUDED_NAME_PATTERNS = [
   "coco fresh", "tiger sugar", "sharetea", "happy lemon", "jamba",
   "smoothie king", "juice bar",
   // Dessert
-  "haagen", "häagen", "ben & jerry", "baskin", "cold stone", "dairy queen",
+  "haagen", "ben & jerry", "baskin", "cold stone", "dairy queen",
   "krispy kreme", "cinnabon", "insomnia cookies", "crumbl", "gelato",
   "ice cream", "frozen yogurt", "froyo", "donut", "doughnut", "cupcake",
   "macaron", "chocolatier",
   // Not a dining venue at all
-  "concession", "concessions", "food court", "kiosk",
+  "concession", "food court", "kiosk",
 ];
 
 /** Strip diacritics so "Häagen-Dazs" still matches the ASCII pattern "haagen". */
@@ -141,10 +141,12 @@ function normalizeName(name: string): string {
     .toLowerCase();
 }
 
+// Trailing `s?` tolerates the plural of a singular-only pattern ("donut" ->
+// "Donuts", "kiosk" -> "Kiosks") without enumerating every plural by hand.
 const EXCLUDED_NAME_RE = new RegExp(
   `\\b(?:${EXCLUDED_NAME_PATTERNS.map((p) =>
     p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  ).join("|")})\\b`,
+  ).join("|")})s?\\b`,
   "i"
 );
 

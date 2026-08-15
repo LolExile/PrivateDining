@@ -97,4 +97,23 @@ describe("isExcludedByName", () => {
   it("no longer excludes on the generic 'candy' pattern", () => {
     expect(isExcludedByName("Rock Candy Kitchen")).toBe(false);
   });
+
+  it("matches the plural of a singular-only pattern", () => {
+    // Regression: the \b...\b word-boundary change silently narrowed every
+    // singular-only pattern, so "donut" stopped matching "Donuts" and
+    // "kiosk" stopped matching "Kiosks". Only "concession" was covered,
+    // because a test happened to exercise its already-plural entry.
+    expect(isExcludedByName("Krispy Kreme Donuts")).toBe(true);
+  });
+
+  it("still rejects a concessions stand now that the plural is implicit", () => {
+    // "concessions" was removed as a redundant explicit entry once the
+    // pattern gained an optional trailing "s" — this must keep passing.
+    expect(isExcludedByName("Sandbar Concessions Inc")).toBe(true);
+  });
+
+  it("the plural suffix does not reintroduce the substring problem", () => {
+    expect(isExcludedByName("Mama's Jambalaya House")).toBe(false);
+    expect(isExcludedByName("Rock Candy Kitchen")).toBe(false);
+  });
 });
