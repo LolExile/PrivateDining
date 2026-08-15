@@ -326,3 +326,97 @@ Each phase leaves the app working.
 - **The Content API has a successor.** TripAdvisor is moving to
   [Terra](https://docs.terra.tripadvisor.com/docs/overview). The Content API is what is live and
   free today; this design will need revisiting when it is retired.
+
+---
+
+# ADDENDUM — Terra migration (supersedes §4–§7 and §11 above)
+
+**Date:** 2026-08-15. Everything above was designed against the legacy TripAdvisor Content API.
+That was the wrong API: the owner's account is on **Terra**, and the legacy Content API
+**sunsets 2026-08-31**. The sections below replace the legacy assumptions. Sections §8 (database),
+§9 (types), §10 (attribution), §12 (failure modes) and §13 (testing) stand unchanged except where
+noted.
+
+## A1. Verified Terra facts
+
+All confirmed by live request returning HTTP 200, not from documentation alone.
+
+| Aspect | Legacy (wrong) | Terra (actual) |
+|---|---|---|
+| Base | `api.content.tripadvisor.com/api/v1` | `terra.tripadvisor.com/api` |
+| Auth | `?key=` query param | **`X-API-Key` header** |
+| Restriction | IP/domain allowlist mandatory | **None** — the key works unrestricted |
+| Nearby | `/location/nearby_search`, max 10, no pagination | `/catalog/locations/nearby`, `size` max 20, **real `page` pagination** |
+| Details | `/location/{id}/details` | `/locations/{id}` |
+| Photos | separate endpoint, unused | `/locations/{id}/photos` |
+| Billing | 5,000 calls/month free | **per location returned; 1,000 free ONCE per account**, then $0.015→$0.009 |
+
+**`category=RESTAURANT` does not work.** It is documented and its enum is validated — invalid
+values error — but it is not applied: a response fetched with it returned 14 attractions and 6
+restaurants. Restaurants must be filtered client-side on
+`urls.tripadvisor.main` matching `/Restaurant_Review`.
+
+**`pagination.total_elements` is unreliable.** It tracked page size (2 at `size=1`, 21 at
+`size=20`), not the number of matches. Never use it as a result count.
+
+## A2. Field availability
+
+Nearby returns: `id`, `names[]`, `descriptions[]`, `addresses[]`, `coordinates`,
+`overall_rating{rating,count,icon_url}`, `urls{tripadvisor{main},official}`, plus
+`distance_kilometers`.
+
+Details adds: `phone_numbers[]`, `opening_hours`, `traveler_ratings`, `price_level`,
+`photos.total_count`, `addresses[].street_address`.
+
+**`price_level` is a label** (`"Mid Range"`), not `"$$ - $$$"`. The `$`-counting parser from
+Task 1 does not apply and is replaced by a label→tier map.
+
+**Cuisine is not available at any point.** Verified by exhaustive recursive key dump of both
+responses; `descriptions` is empty. Terra's tier documentation covers quotas only and never
+states which content fields each package unlocks, so whether a higher tier supplies cuisine is
+undetermined.
+
+## A3. Architecture changes
+
+**The grid fan-out is deleted.** It existed only to work around legacy's 10-result cap with no
+pagination. Terra paginates, so one centre call plus pagination replaces all 13 points.
+`src/lib/search-grid.ts` and its tests are removed. Under per-entity billing the grid would have
+cost ~260 entities per search — four searches would exhaust the lifetime free allowance.
+
+**Per search:** page through `/catalog/locations/nearby` (sorted by distance), filter each page
+client-side to `/Restaurant_Review`, and stop once 10 restaurants are collected or pages run out.
+Then one `/locations/{id}` and one `/locations/{id}/photos?size=1` per surviving restaurant.
+Roughly 50–60 entities per cold search.
+
+**Reviews are never fetched.** `/locations/{id}/reviews` exists and is deliberately unused —
+it would multiply cost for data the app does not rank on.
+
+## A4. Result count and ranking
+
+**Ten results, not twenty.** The list caps at 10 restaurants meeting the user's criteria.
+
+**Cuisine leaves the ranker.** It cannot be sourced live, and leaving a 35-weight factor scoring
+on a field that is null for every live venue would sink every live result. Its weight
+redistributes proportionally, preserving the originally stated priority order:
+
+| Factor | Before | After |
+|---|---|---|
+| Cuisine | 35 | — (display only) |
+| Capacity | 25 | 38 |
+| Commute | 20 | 31 |
+| Private rooms | 10 | 15 |
+| Price | 6 | 9 |
+| Trust | 4 | 7 |
+
+Cuisine is still *displayed* when known, and the capacity extractor gains it as a field — the
+extractor already fetches each restaurant's own website via `urls.official`, so cuisine costs no
+additional TripAdvisor entities. Once it populates, reinstating cuisine as a modest soft factor
+with unknown scoring neutral (the rule capacity and dietary already follow) is a small change.
+
+The cuisine dropdown offers only cuisines present in the current results — no hardcoded guesses.
+
+## A5. Attribution (amends §10)
+
+`overall_rating.icon_url` and `traveler_ratings.overall.icon_url` **are** TripAdvisor's own bubble
+image, served from their CDN. That satisfies the display requirement directly and removes the need
+for a separate `rating_image_url` field. The logo and listing link requirements are unchanged.
