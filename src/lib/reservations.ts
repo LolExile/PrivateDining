@@ -10,6 +10,14 @@ export interface NewAttendee {
 
 export interface NewReservation {
   venue_id: string;
+  venue_name: string;
+  venue_address: string;
+  venue_lat: number;
+  venue_lng: number;
+  venue_ta_id: string | null;
+  venue_ta_url: string | null;
+  venue_rating: number | null;
+  venue_image_url: string | null;
   title: string;
   event_date: string | null;
   headcount: number;
@@ -100,7 +108,8 @@ export async function createReservation(
   return created;
 }
 
-export interface ReservationWithDetails extends Reservation {
+export interface ReservationWithDetails
+  extends Omit<Reservation, "venue_name" | "venue_address"> {
   venue_name: string;
   venue_address: string;
   attendees: Attendee[];
@@ -111,19 +120,16 @@ export async function listReservations(): Promise<ReservationWithDetails[]> {
   if (!supabase) throw new Error(DB_HINT);
   const { data, error } = await supabase
     .from("reservations")
-    .select(
-      "*, venues(name, address), reservation_attendees(attendees(*))"
-    )
+    .select("*, reservation_attendees(attendees(*))")
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   type Row = Reservation & {
-    venues: { name: string; address: string } | null;
     reservation_attendees: { attendees: Attendee | null }[];
   };
   return (data as Row[]).map((row) => ({
     ...row,
-    venue_name: row.venues?.name ?? row.venue_id,
-    venue_address: row.venues?.address ?? "",
+    venue_name: row.venue_name ?? row.venue_id,
+    venue_address: row.venue_address ?? "",
     attendees: row.reservation_attendees
       .map((ra) => ra.attendees)
       .filter((a): a is Attendee => a !== null),

@@ -102,6 +102,14 @@ export interface Attendee {
 export interface Reservation {
   id: string;
   venue_id: string;
+  venue_name: string | null;
+  venue_address: string | null;
+  venue_lat: number | null;
+  venue_lng: number | null;
+  venue_ta_id: string | null;
+  venue_ta_url: string | null;
+  venue_rating: number | null;
+  venue_image_url: string | null;
   title: string;
   event_date: string | null;
   headcount: number;

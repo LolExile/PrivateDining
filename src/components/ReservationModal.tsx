@@ -91,6 +91,17 @@ export function ReservationModal({ venue, params, onClose, onSaved }: Reservatio
       await createReservation(
         {
           venue_id: venue.id,
+          venue_name: venue.name,
+          venue_address: venue.address,
+          venue_lat: venue.lat,
+          venue_lng: venue.lng,
+          // Use the real field. `venue.id` is `ta-<id>` only for live-only
+          // venues; a curated one's id is a slug like "carmines-times-square",
+          // and string-stripping it would store the slug as a TripAdvisor id.
+          venue_ta_id: venue.ta_location_id,
+          venue_ta_url: venue.ta_url,
+          venue_rating: venue.rating,
+          venue_image_url: venue.image_url,
           title: title.trim() || `Dinner at ${venue.name}`,
           event_date: eventDate || null,
           headcount: params.headcount,
