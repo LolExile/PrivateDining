@@ -1389,19 +1389,22 @@ export const FALLBACK_VENUES: Venue[] = loadOverlay()
 
 Note: the overlay deliberately does not store name, address, or coordinates — those are TripAdvisor's. The fallback therefore renders a degraded card. Task 9's follow-up is to add `name`, `address`, `lat`, `lng` to each overlay entry as a **display fallback only**; do that now while reviewing the overlay, copying the values from `venues.json` before it is deleted.
 
-- [ ] **Step 2: Add fallback display fields to the overlay**
+- [ ] **Step 2: Verify the overlay's display-fallback fields (already present)**
 
-Add `name`, `address`, `lat`, `lng` to each entry in `src/data/overlay.json`, copied from the corresponding `src/data/venues.json` entry. Add them to `OverlayEntry` in `src/lib/merge-venue.ts`:
+This step is a check, not a change. `OverlayEntry` was defined complete in Task 5 — including
+`name`, `address`, `lat`, `lng`, `city`, and `neighbourhood` — and Task 7 populated all of them
+for the 38 curated venues. Confirm and move on:
 
-```ts
-  /** Display fallback only — the live record wins when TripAdvisor responds. */
-  name: string;
-  address: string;
-  lat: number;
-  lng: number;
+```bash
+node -e "const o=require('./src/data/overlay.json');const bad=o.filter(e=>!e.name||!e.address||typeof e.lat!=='number'||typeof e.lng!=='number');console.log(o.length+' entries, '+bad.length+' missing display fallbacks')"
 ```
 
-Then use them in `FALLBACK_VENUES` in place of the derived name and the zeroed coordinates. `mergeVenue` continues to prefer `live.name` / `live.address` / `live.lat` / `live.lng`; do not change it.
+Expected: `38 entries, 0 missing display fallbacks`.
+
+Do **not** add these fields to `OverlayEntry` — they are already there, and a duplicate member
+is a TypeScript error. Do not change `mergeVenue`: it deliberately prefers `live.name` /
+`live.address` / `live.lat` / `live.lng` over the overlay's copies, which exist only for the
+offline path this task builds.
 
 - [ ] **Step 3: Rewrite the search handler in `page.tsx`**
 
