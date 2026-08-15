@@ -2309,7 +2309,7 @@ In the expanded room section of `VenueCard.tsx`, add below the room list:
           )}
 ```
 
-- [ ] **Step 7: Verify**
+- [ ] **Step 5: Verify**
 
 ```bash
 npm run build && npm run dev
@@ -2317,7 +2317,7 @@ npm run build && npm run dev
 
 Open the app, run a search, and confirm each card shows a TripAdvisor bubble image, a logo at least 20px high, and a working listing link. Venues with extracted capacity show the source line.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add public/tripadvisor.svg src/components/Badges.tsx src/components/VenueCard.tsx
