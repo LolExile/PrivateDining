@@ -54,8 +54,9 @@ Search, ranking, and the map keep working; saving plans requires the database.
 
 ## Setup
 
-Requires **Node.js 20 or newer**. The repository ships with credentials for a shared demo
-Supabase project, so there is nothing to configure.
+Requires **Node.js 20 or newer**. That is the only prerequisite — the app connects to a hosted
+Supabase database that is already created and seeded, and its credentials are committed in
+`.env`. There is no account to make, no migration to run, and no environment file to write.
 
 ```bash
 npm install
@@ -63,7 +64,7 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). Search, ranking, the map, and dinner-plan
-saving all work immediately — the database is already created and seeded.
+saving all work immediately.
 
 > The committed `.env` contains a Supabase **publishable** key, which is designed to be sent to
 > the browser; the secret key is not in this repository. Treat the shared database as demo-only:
@@ -96,33 +97,6 @@ photos for every venue. It reads a [Yelp Fusion API key](https://www.yelp.com/de
 carries no private-dining data, so enrichment refreshes only the public signals and upgrades
 the trust label on matched listings. Re-run `0002_seed.sql` afterward to apply the new data.
 
-## Using your own Supabase project
-
-To point the app at your own database instead of the shared demo one, create a project at
-[supabase.com/dashboard](https://supabase.com/dashboard), then open its **SQL Editor** and run
-these two files in order, waiting for each to finish before starting the next:
-
-1. `supabase/migrations/0001_schema.sql` — tables, indexes, and RLS policies
-2. `supabase/migrations/0002_seed.sql` — 38 curated venues and 72 private rooms
-
-Then create a `.env.local` file in the project root, which overrides the committed `.env`:
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_<your-key>
-```
-
-Both values come from **Project Settings → API**; the project ref is the identifier in your
-dashboard URL. `.env.local` is gitignored, so your credentials stay local. Never put the
-`sb_secret_` key in either file — the app has no use for it.
-
-> `0002_seed.sql` begins with `truncate public.venues cascade`, so re-running it replaces all
-> existing venue and room data.
-
-If the app ever cannot reach the database, it falls back to the bundled venue dataset and shows
-a "Demo data · database offline" chip; search, ranking, and the map keep working, but plans
-cannot be saved.
-
 ## How it works
 
 **Commute estimates** use haversine distance multiplied by a 1.3 urban routing factor, at
@@ -154,6 +128,11 @@ trust labels model exactly that uncertainty.
 Row Level Security is enabled on all five tables. Venue data is read-only to the publishable
 key; the planning tables allow read and write. There is no auth by design — this is an
 internal planner tool.
+
+The SQL that produced this database lives in `supabase/migrations/` (`0001_schema.sql` for the
+tables, indexes, and RLS policies; `0002_seed.sql` for the 38 venues and 72 rooms). It has
+already been applied to the hosted project — the files are kept for reference and for
+regenerating seed data, not as a setup step.
 
 ## With more time
 
