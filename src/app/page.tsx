@@ -156,8 +156,7 @@ export default function Home() {
                 </span>
               </div>
               <p className="mb-3 text-[12px] text-ink-soft">
-                Ranked by {params.cuisine ? "cuisine match, " : ""}capacity fit, commute,
-                private rooms, price signal, and trust.
+                Ranked by capacity fit, commute, private rooms, price signal, and trust.
                 {ranked.excludedByCommute > 0 &&
                   ` ${ranked.excludedByCommute} excluded by commute limit.`}
                 {ranked.excludedByDietary > 0 &&

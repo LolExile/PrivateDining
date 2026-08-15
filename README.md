@@ -39,8 +39,9 @@ factor, so a ranking is never a black box.
 
 **Venue detail** — name, address, photo, private rooms with seated and standing capacities,
 distance and commute time, trust label (verified / likely / needs a call), price signal
-(minimum spend or price tier, carrying its own separate trust label), star rating, cuisine,
-dietary accommodations, menu link with sample dishes, and contact information.
+(minimum spend or price tier, carrying its own separate trust label), Tripadvisor rating,
+cuisine, dietary accommodations, menu link with sample dishes, and contact information. Results
+are capped at 10 venues per search.
 
 **Map** — a right-hand pane with rank-numbered markers kept in sync with the result list.
 
@@ -48,9 +49,9 @@ dietary accommodations, menu link with sample dishes, and contact information.
 Attendee profiles are stored in Supabase and deduplicated by email, so the same guests can be
 pulled into the next dinner. Saved plans are browsable under "Saved plans".
 
-**Offline resilience** — if the Supabase tables are missing or unreachable, the app serves the
-same venue dataset from a bundled copy and displays a "Demo data · database offline" chip.
-Search, ranking, and the map keep working; saving plans requires the database.
+**Offline resilience** — if Tripadvisor is unreachable, the app falls back to the curated
+overlay venues and shows a live-data notice explaining why. Search, ranking, and the map keep
+working on the fallback set; saving plans still requires Supabase.
 
 ## Setup
 
@@ -79,23 +80,34 @@ saving all work immediately.
 | `npm run build` | Build for production |
 | `npm start` | Serve the production build (run `npm run build` first) |
 | `npm run lint` | Run ESLint |
-| `node scripts/generate-seed.mjs` | Regenerate `supabase/migrations/0002_seed.sql` from `src/data/venues.json` |
-| `node scripts/enrich-yelp.mjs` | Refresh venue data from the Yelp Fusion API, then regenerate the seed SQL |
+| `npm test` | Run the automated test suite |
+| `node scripts/match-overlay.mjs` | Match curated venues to Tripadvisor location ids and rebuild `src/data/overlay.json` |
+| `npm run extract-capacity` | Extract private-dining capacity and cuisine from a venue's own website |
 
 ### Editing venue data
 
-`src/data/venues.json` is the single source of truth — it powers both the seeded database and
-the offline fallback. After editing it, run `node scripts/generate-seed.mjs` to regenerate the
-seed SQL, then re-run `supabase/migrations/0002_seed.sql` in the SQL Editor to push the change
-to the database.
+`src/data/overlay.json` is the single source of truth for curated private-dining data — rooms,
+contact info, dietary notes, and menu highlights for the venues we've researched by hand.
+Tripadvisor supplies everything else (name, address, rating, price signal, photo) live at
+search time, so there is no seed table to regenerate. After editing `overlay.json`, run
+`node scripts/match-overlay.mjs` to (re)match entries against Tripadvisor location ids; review
+each `_match_candidate` before deleting it, since an unconfirmed match is ignored at runtime.
 
-### Refreshing from Yelp
+### Tripadvisor Terra
 
-`scripts/enrich-yelp.mjs` pulls live ratings, review counts, price tiers, phone numbers, and
-photos for every venue. It reads a [Yelp Fusion API key](https://www.yelp.com/developers) from
-`.env.local` as `YELP_API_KEY=...`. Curated private-room capacities are preserved — Yelp
-carries no private-dining data, so enrichment refreshes only the public signals and upgrades
-the trust label on matched listings. Re-run `0002_seed.sql` afterward to apply the new data.
+Live venue data — name, address, rating, price tier, and photo — is fetched at search time from
+Tripadvisor's **Terra** API (base `https://terra.tripadvisor.com/api`), authenticated with an
+`X-API-Key` header. Put your key in `.env.local` as `TRIPADVISOR_API_KEY=...`; there is no IP or
+domain allowlist involved.
+
+**Billing is per location returned** — every location in a response, whether from the nearby
+search, a details call, or a photo call, is one billable entity. The account gets **1,000 free
+locations once, for the lifetime of the account** (not a monthly allowance), after which usage
+is billed. A single cold search costs roughly 100 billable locations, so budget accordingly
+before running repeated searches or the extraction script over many venues.
+
+Tripadvisor's legacy Content API (`api.content.tripadvisor.com`), which this app used before the
+Terra migration, **sunsets on 2026-08-31**. Terra is the only supported path going forward.
 
 ## How it works
 
@@ -119,25 +131,27 @@ trust labels model exactly that uncertainty.
 
 | Table | Purpose |
 | --- | --- |
-| `venues` | Venue listing: location, cuisine, rating, price signal and trust, dietary, menu, contact |
-| `private_rooms` | Each room or space with its seated and standing capacity |
+| `venue_capacity` | Machine-extracted private-dining capacity and cuisine for venues outside the curated overlay, keyed by Tripadvisor location id |
 | `attendees` | Saved guest profiles (name, email, phone, dietary notes), deduplicated by email |
-| `reservations` | A planned dinner: venue, date, headcount, and the search context |
+| `reservations` | A planned dinner: a self-contained snapshot of the chosen venue, date, headcount, and the search context |
 | `reservation_attendees` | Join table linking plans to attendee profiles |
 
-Row Level Security is enabled on all five tables. Venue data is read-only to the publishable
-key; the planning tables allow read and write. There is no auth by design — this is an
-internal planner tool.
+Row Level Security is enabled on all four tables. `venue_capacity` is read-only to the
+publishable key and written only by `scripts/extract-capacity.ts` under the service role; the
+planning tables allow read and write. There is no auth by design — this is an internal planner
+tool.
 
-The SQL that produced this database lives in `supabase/migrations/` (`0001_schema.sql` for the
-tables, indexes, and RLS policies; `0002_seed.sql` for the 38 venues and 72 rooms). It has
-already been applied to the hosted project — the files are kept for reference and for
-regenerating seed data, not as a setup step.
+The SQL that produced this database lives in `supabase/migrations/` — `0001_schema.sql` for the
+original tables, indexes, and RLS policies, `0003_live_venues.sql` for the move to live
+Tripadvisor data (dropping the venue catalog in favor of `venue_capacity` and a self-contained
+reservation snapshot), and `0004_capacity_cuisine.sql` for the extractor's cuisine column. All
+three have already been applied to the hosted project — the files are kept for reference, not
+as a setup step.
 
 ## With more time
 
-- Live data: Google Places / Yelp Fusion for real-time ratings, photos, and hours, plus a
-  routing API such as OSRM or Mapbox for true commute times instead of estimates.
+- A routing API such as OSRM or Mapbox for true commute times, instead of the haversine
+  estimate.
 - Authentication and per-planner workspaces, so RLS can scope plans to their owner.
 - Outreach: draft inquiry emails to venue contacts directly from a saved plan.
 - Room-level availability calendars and RFP status tracking per venue.

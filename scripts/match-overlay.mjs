@@ -1,13 +1,13 @@
 // Builds src/data/overlay.json from the legacy src/data/venues.json by matching
-// each curated venue to a TripAdvisor location_id, keeping ONLY the fields
-// TripAdvisor cannot supply (rooms, contact, dietary, menu notes).
+// each curated venue to a Tripadvisor location_id, keeping ONLY the fields
+// Tripadvisor cannot supply (rooms, contact, dietary, menu notes).
 //
 // Matches are written with a _match_candidate field for human review. An entry
 // whose match you have not confirmed keeps ta_location_id: null and is ignored
 // at runtime.
 //
 // Usage:
-//   1. TRIPADVISOR_API_KEY=... in .env.local, with this machine's IP allowlisted
+//   1. TRIPADVISOR_API_KEY=... in .env.local (Terra key, no IP/domain allowlist)
 //   2. node scripts/match-overlay.mjs
 //   3. Review each _match_candidate; delete the field once confirmed.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -31,8 +31,8 @@ if (!KEY) {
   console.warn(
     "No TRIPADVISOR_API_KEY found — transforming src/data/venues.json only.\n" +
       "Every entry will be written with ta_location_id: null and no _match_candidate.\n" +
-      "Get a key at https://www.tripadvisor.com/developers, restrict it to this\n" +
-      "machine's public IPv4, put it in .env.local, and re-run to populate matches.\n"
+      "Get a Terra key at https://www.tripadvisor.com/developers, put it in\n" +
+      ".env.local, and re-run to populate matches.\n"
   );
 }
 
@@ -41,23 +41,34 @@ const venues = JSON.parse(
 );
 
 async function search(name, lat, lng) {
-  const url = new URL("https://api.content.tripadvisor.com/api/v1/location/search");
-  url.searchParams.set("searchQuery", name);
-  url.searchParams.set("category", "restaurants");
-  url.searchParams.set("latLong", `${lat},${lng}`);
+  const url = new URL("https://terra.tripadvisor.com/api/catalog/locations/nearby");
+  url.searchParams.set("lat", String(lat));
+  url.searchParams.set("lon", String(lng));
   url.searchParams.set("radius", "2");
-  url.searchParams.set("radiusUnit", "km");
-  url.searchParams.set("key", KEY);
-  const res = await fetch(url, { headers: { accept: "application/json" } });
-  if (res.status === 403) {
-    console.error(
-      "403 from TripAdvisor — add this machine's public IPv4 to the key's allowlist."
-    );
+  url.searchParams.set("unit", "KM");
+  url.searchParams.set("size", "20");
+  url.searchParams.set("sort", "distance,asc");
+  const res = await fetch(url, {
+    headers: { "X-API-Key": KEY, accept: "application/json" },
+  });
+  if (res.status === 401 || res.status === 403) {
+    console.error("Tripadvisor rejected the key. Check TRIPADVISOR_API_KEY in .env.local.");
     process.exit(1);
   }
-  if (!res.ok) throw new Error(`search ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`nearby ${res.status}: ${await res.text()}`);
   const json = await res.json();
-  return json.data?.[0] ?? null;
+  const wanted = name.toLowerCase();
+  const rows = (json.data ?? []).filter((d) =>
+    /\/Restaurant_Review/.test(d.location?.urls?.tripadvisor?.main ?? "")
+  );
+  // Prefer a name match; fall back to the nearest restaurant.
+  const hit =
+    rows.find((d) =>
+      (d.location.names?.[0]?.value ?? "").toLowerCase().includes(wanted)
+    ) ?? rows[0];
+  return hit
+    ? { location_id: String(hit.location.id), name: hit.location.names?.[0]?.value }
+    : null;
 }
 
 const overlay = [];
