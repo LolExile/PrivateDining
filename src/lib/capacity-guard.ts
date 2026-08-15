@@ -91,3 +91,32 @@ export function confidenceFor(
   const hasNumber = rooms.some((r) => r.seated !== null || r.standing !== null);
   return hasNumber ? "likely" : "unverified";
 }
+
+/**
+ * Where an extracted capacity block came from, ranked cheapest-and-most-
+ * trusted to most-expensive-and-least-trusted:
+ * - "own-site": the restaurant's own domain (homepage link, a probed
+ *   conventional path, or the homepage itself).
+ * - "directory": a branch-specific third-party listing (OpenTable,
+ *   PartySlate, EventUp, Tripleseat) turned up by domain-restricted search.
+ * - "search": anything else the search tool returned — a page whose
+ *   provenance could not be pinned to the venue's own site or a known
+ *   directory. Treated as the weakest signal on purpose.
+ */
+export type CapacitySource = "own-site" | "directory" | "search";
+
+/**
+ * Extracted capacity is only as trustworthy as where it came from. The
+ * restaurant's own site and a branch-specific directory listing with real
+ * numbers earn "likely"; anything else stays "unverified" and the card tells
+ * the planner to call. Search results are the weakest source and never
+ * upgrade a venue on their own.
+ */
+export function confidenceForSource(
+  source: CapacitySource,
+  rooms: { seated: number | null; standing: number | null }[]
+): "likely" | "unverified" {
+  const hasNumber = rooms.some((r) => r.seated !== null || r.standing !== null);
+  if (!hasNumber) return "unverified";
+  return source === "search" ? "unverified" : "likely";
+}

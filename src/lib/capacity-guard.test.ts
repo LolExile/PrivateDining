@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { acceptRoomBlock, confidenceFor, type ExtractedBlock } from "./capacity-guard";
+import { acceptRoomBlock, confidenceFor, confidenceForSource, type ExtractedBlock } from "./capacity-guard";
 
 const carmines = {
   city: "New York",
@@ -121,5 +121,33 @@ describe("confidenceFor", () => {
 
   it("is unverified for an empty list", () => {
     expect(confidenceFor([])).toBe("unverified");
+  });
+});
+
+describe("confidenceForSource", () => {
+  it("is likely for the restaurant's own site with a number", () => {
+    expect(confidenceForSource("own-site", [{ seated: 40, standing: null }])).toBe("likely");
+  });
+
+  it("is likely for a branch-specific directory listing with a number", () => {
+    expect(confidenceForSource("directory", [{ seated: null, standing: 100 }])).toBe("likely");
+  });
+
+  it("is unverified for search-derived data even with a number", () => {
+    expect(confidenceForSource("search", [{ seated: 100, standing: null }])).toBe("unverified");
+  });
+
+  it("is unverified for own-site data with no number", () => {
+    expect(confidenceForSource("own-site", [{ seated: null, standing: null }])).toBe("unverified");
+  });
+
+  it("is unverified for a directory listing with no number", () => {
+    expect(confidenceForSource("directory", [{ seated: null, standing: null }])).toBe("unverified");
+  });
+
+  it("is unverified for an empty room list from any source", () => {
+    expect(confidenceForSource("own-site", [])).toBe("unverified");
+    expect(confidenceForSource("directory", [])).toBe("unverified");
+    expect(confidenceForSource("search", [])).toBe("unverified");
   });
 });
