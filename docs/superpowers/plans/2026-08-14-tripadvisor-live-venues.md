@@ -303,9 +303,13 @@ In `src/lib/ranking.ts`, replace the capacity block (currently lines 107-124):
 
 ```ts
     const bestRoom = pickBestRoom(venue, params.headcount, params.eventStyle);
+    // `null`, not 0, when there is no room: a venue with no room data is
+    // UNKNOWN, not known-to-hold-nobody. Using 0 here makes capacityKnown
+    // always true and scores every live TripAdvisor venue (which all arrive
+    // with rooms: []) at capacity zero.
     const bestCapacity = bestRoom
       ? relevantCapacity(bestRoom, params.eventStyle)
-      : 0;
+      : null;
     const capacityKnown = bestCapacity !== null;
     const capacityOk = capacityKnown && bestCapacity >= params.headcount;
     // Unknown capacity scores as unconfirmed, not as zero: the room may well
@@ -399,7 +403,7 @@ TripAdvisor returns at most 10 results per search with no pagination, so one cal
 - Consumes: `SEARCH_RADIUS_MILES` from `src/lib/geo.ts`
 - Produces:
   - `commuteRadiusKm(maxCommuteMinutes: number, mode: CommuteMode): number` — inverts `commuteMinutes()`, clamped to the 20-mile hard limit.
-  - `searchGrid(lat: number, lng: number, radiusKm: number): { lat: number; lng: number }[]` — centre plus 5 ring points at 0.6 × radius, 6 total.
+  - `searchGrid(lat: number, lng: number, radiusKm: number): { lat: number; lng: number }[]` — centre plus two rings of 6 (at 0.5 and 0.85 × radius, the outer offset half a step), 13 total. The pool must be large enough that 20 venues survive dedup, the radius filter, and the commute limit.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -426,10 +430,24 @@ describe("commuteRadiusKm", () => {
 });
 
 describe("searchGrid", () => {
-  it("returns the centre plus five ring points", () => {
+  it("returns the centre plus two rings of six", () => {
     const points = searchGrid(40.758, -73.9855, 2);
-    expect(points).toHaveLength(6);
+    expect(points).toHaveLength(13);
     expect(points[0]).toEqual({ lat: 40.758, lng: -73.9855 });
+  });
+
+  it("offsets the outer ring between the inner ring's points", () => {
+    const points = searchGrid(40.758, -73.9855, 2);
+    const inner = points.slice(1, 7);
+    const outer = points.slice(7, 13);
+    // No outer point should sit on the same bearing as an inner one.
+    for (const o of outer) {
+      const coincident = inner.some(
+        (i) =>
+          Math.abs(i.lat - o.lat) < 1e-9 && Math.abs(i.lng - o.lng) < 1e-9
+      );
+      expect(coincident).toBe(false);
+    }
   });
 
   it("places ring points inside the radius", () => {
@@ -474,14 +492,20 @@ export function commuteRadiusKm(
   return Math.min(km, MAX_RADIUS_KM);
 }
 
-const RING_POINTS = 5;
-const RING_FRACTION = 0.6;
+const RING_POINTS = 6;
+/** Two rings: an inner sweep and an outer one closer to the radius edge. */
+const RING_FRACTIONS = [0.5, 0.85];
 const KM_PER_DEG_LAT = 110.574;
 
 /**
  * TripAdvisor caps every search at 10 results with no pagination, so a single
- * query cannot fill a map. Searching a centre point plus a ring inside the
- * radius yields up to 60 candidates for ~6 calls.
+ * query cannot fill a map. Centre plus two offset rings yields up to 130 raw
+ * hits for 13 calls — enough that 20 still survive dedup, the radius filter,
+ * and the commute limit.
+ *
+ * The second ring is offset half a step so its points sit between the inner
+ * ring's, rather than radially behind them where their result sets overlap
+ * most.
  */
 export function searchGrid(
   lat: number,
@@ -489,15 +513,17 @@ export function searchGrid(
   radiusKm: number
 ): { lat: number; lng: number }[] {
   const points = [{ lat, lng }];
-  const ringKm = radiusKm * RING_FRACTION;
   const kmPerDegLng = KM_PER_DEG_LAT * Math.cos((lat * Math.PI) / 180);
-  for (let i = 0; i < RING_POINTS; i++) {
-    const angle = (2 * Math.PI * i) / RING_POINTS;
-    points.push({
-      lat: lat + (ringKm * Math.cos(angle)) / KM_PER_DEG_LAT,
-      lng: lng + (ringKm * Math.sin(angle)) / kmPerDegLng,
-    });
-  }
+  RING_FRACTIONS.forEach((fraction, ring) => {
+    const ringKm = radiusKm * fraction;
+    for (let i = 0; i < RING_POINTS; i++) {
+      const angle = (2 * Math.PI * (i + ring * 0.5)) / RING_POINTS;
+      points.push({
+        lat: lat + (ringKm * Math.cos(angle)) / KM_PER_DEG_LAT,
+        lng: lng + (ringKm * Math.sin(angle)) / kmPerDegLng,
+      });
+    }
+  });
   return points;
 }
 ```
@@ -990,8 +1016,12 @@ import {
 } from "@/lib/tripadvisor";
 import type { CommuteMode, Venue } from "@/lib/types";
 
-/** Details calls dominate the budget; 30 candidates yields 20 good results. */
-const MAX_CANDIDATES = 30;
+/**
+ * Details calls dominate the budget. 45 candidates is sized so that 20 still
+ * survive dedup, the radius filter, and the commute limit — the user's
+ * requirement is 20 results for any address, not 20 candidates.
+ */
+const MAX_CANDIDATES = 45;
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -2329,6 +2359,136 @@ Expected: all pass. In the app, run a broad search and confirm the heading reads
 ```bash
 git add src/app/page.tsx src/components/ReservationModal.tsx README.md
 git commit -m "feat: cap results at 20, clarify plans are not reservations, update README"
+```
+
+---
+
+### Task 15: Unconfirmed dietary, not disqualified
+
+**Execute this immediately after Task 2** — it is numbered 15 only so the brief tooling can
+extract it. It changes `ranking.ts`, which Task 2 also touches, so it must not run concurrently
+with that task.
+
+TripAdvisor has no dietary field (the location response carries `cuisine`, `features`, and
+`price_level` — no `dietary_restrictions`), so `mergeVenue` gives every live-only venue
+`dietary: []`. `ranking.ts` currently drops any venue whose `dietary` array lacks a requested
+tag, which means ticking any dietary box would exclude every live venue and return an empty
+list. Unknown must mean unconfirmed, not disqualified — the same rule capacity already follows.
+
+**Files:**
+- Modify: `src/lib/ranking.ts` (the dietary filter, currently ~lines 89-95)
+- Modify: `src/lib/types.ts` (`RankedVenue`)
+- Modify: `src/lib/ranking.test.ts` (add cases)
+- Modify: `src/components/VenueCard.tsx` (surface the unconfirmed state)
+
+**Interfaces:**
+- Consumes: `RankedVenue`, `rankVenues` (Task 2)
+- Produces: `RankedVenue.dietaryUnconfirmed: boolean` — true when the user requested dietary
+  accommodations and this venue has no dietary data at all.
+
+- [ ] **Step 1: Write the failing tests**
+
+Append to `src/lib/ranking.test.ts`:
+
+```ts
+describe("rankVenues with unconfirmed dietary", () => {
+  const vegParams: SearchParams = { ...params, dietary: ["vegetarian"] };
+
+  it("excludes a venue whose known dietary list lacks the request", () => {
+    const known = venue({ id: "known", dietary: ["vegan"], rooms: [room({ seated: 60 })] });
+    const { results, excludedByDietary } = rankVenues([known], vegParams);
+    expect(results).toHaveLength(0);
+    expect(excludedByDietary).toBe(1);
+  });
+
+  it("keeps a venue with no dietary data and flags it unconfirmed", () => {
+    const live = venue({ id: "live", dietary: [], rooms: [room({ seated: 60 })] });
+    const { results, excludedByDietary } = rankVenues([live], vegParams);
+    expect(results).toHaveLength(1);
+    expect(results[0].dietaryUnconfirmed).toBe(true);
+    expect(results[0].dietaryMissing).toEqual(["vegetarian"]);
+    expect(excludedByDietary).toBe(0);
+  });
+
+  it("keeps a venue that genuinely accommodates, unflagged", () => {
+    const ok = venue({ id: "ok", dietary: ["vegetarian"], rooms: [room({ seated: 60 })] });
+    const { results } = rankVenues([ok], vegParams);
+    expect(results).toHaveLength(1);
+    expect(results[0].dietaryUnconfirmed).toBe(false);
+    expect(results[0].dietaryMissing).toEqual([]);
+  });
+
+  it("flags nothing when no dietary need was requested", () => {
+    const live = venue({ id: "live", dietary: [], rooms: [room({ seated: 60 })] });
+    const { results } = rankVenues([live], params);
+    expect(results[0].dietaryUnconfirmed).toBe(false);
+  });
+});
+```
+
+- [ ] **Step 2: Run the tests to verify they fail**
+
+Run: `npm test -- ranking`
+Expected: FAIL — `dietaryUnconfirmed` does not exist, and the second case returns 0 results
+because the current filter excludes it.
+
+- [ ] **Step 3: Add the field to `RankedVenue`**
+
+In `src/lib/types.ts`, add to `RankedVenue` after `dietaryMissing: string[];`:
+
+```ts
+  /** User asked for dietary accommodations and this venue has no dietary data. */
+  dietaryUnconfirmed: boolean;
+```
+
+- [ ] **Step 4: Change the filter in `ranking.ts`**
+
+Replace the dietary block (currently ~lines 89-95):
+
+```ts
+    // Unknown dietary data is unconfirmed, not disqualifying — the same rule
+    // capacity follows. A venue with a curated list that lacks a requested tag
+    // is genuinely excluded; a live venue with no list at all is kept and
+    // flagged, because TripAdvisor supplies no dietary data and excluding on
+    // its absence would empty the results whenever any box is ticked.
+    const dietaryKnown = venue.dietary.length > 0;
+    const dietaryMissing = params.dietary.filter(
+      (d) => !venue.dietary.includes(d)
+    );
+    if (dietaryKnown && dietaryMissing.length > 0) {
+      excludedByDietary++;
+      continue;
+    }
+    const dietaryUnconfirmed = !dietaryKnown && params.dietary.length > 0;
+```
+
+Then add `dietaryUnconfirmed` to the object pushed into `scored` (alongside `dietaryMissing`).
+
+- [ ] **Step 5: Run the tests to verify they pass**
+
+Run: `npm test`
+Expected: PASS — all files green, including Task 2's four capacity cases.
+
+- [ ] **Step 6: Surface it on the card**
+
+In `src/components/VenueCard.tsx`, find where `dietaryMissing` is rendered. Where the venue is
+flagged `dietaryUnconfirmed`, the card must say the need is unconfirmed rather than met or
+missing — for example `Vegetarian: unconfirmed — confirm by phone` instead of listing it as
+missing. Match the surrounding markup and class names; do not restructure the card.
+
+- [ ] **Step 7: Verify**
+
+```bash
+npm test && npx eslint && npm run build
+```
+
+Expected: all pass.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add src/lib/ranking.ts src/lib/types.ts src/lib/ranking.test.ts src/components/VenueCard.tsx
+git commit -m "feat: treat missing dietary data as unconfirmed rather than disqualifying"
 ```
 
 ---

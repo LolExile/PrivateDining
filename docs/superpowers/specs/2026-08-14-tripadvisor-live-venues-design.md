@@ -214,6 +214,16 @@ capacity. This ripples into two functions in `src/lib/ranking.ts`:
 
 A venue whose only rooms have unknown capacity scores as capacity-unknown (partial credit,
 `0.5 × WEIGHTS.capacity`), not capacity-zero — it plausibly fits, it just hasn't been confirmed.
+**A venue with no rooms at all scores the same way**, for the same reason: `rooms: []` means we
+have no capacity data, not that the venue holds nobody. This is the normal state of every
+live-only TripAdvisor venue, so treating it as a known zero would sink the majority of results.
+The separate private-rooms factor (weight 10) already carries the "no private spaces listed"
+penalty; the capacity factor must not double-count it on a fact we do not have.
+
+`RankedVenue` therefore also carries `capacityKnown: boolean` and `bestCapacity: number | null`,
+so the card renders from the values the ranker computed rather than re-deriving "is this
+confirmed?" from raw nulls — a duplicate derivation that drifts from `relevantCapacity`'s
+event-style awareness and renders "fits 0" beside a "capacity unconfirmed" ledger line.
 
 `Venue` gains `ta_location_id`, `ta_url`, `ta_rating_image_url`, and `capacity_source_url`, all
 nullable, and loses `min_spend` and `price_trust` per §6. `PriceSignal` in `Badges.tsx` and the
@@ -229,10 +239,35 @@ price factor in `ranking.ts` both read the tier alone.
 - Extracted capacity shows "capacity from the restaurant's site" linking to `capacity_source_url`,
   so a planner can verify in one click.
 
-## 11. Ranking and the top-20 cap
+## 11. Ranking, the top-20 target, and unconfirmed dietary
 
-`rankVenues()` is unchanged. `src/app/page.tsx` caps the list: top 3 highlighted, next 17 below,
-and the count line reads "showing top 20 of N found" so truncation is stated rather than silent.
+**Any address the user enters must return up to 20 live venues that meet their stated
+criteria.** The app must not fall back to a static catalog to fill the list.
+
+Two things in the original design defeated that, both found by tracing a real search:
+
+**Dietary was a hard exclusion.** `ranking.ts` drops any venue whose `dietary` array lacks a
+requested tag. TripAdvisor has no dietary field at all — the Content API's location response
+carries `cuisine`, `features`, and `price_level`, but no `dietary_restrictions` — so
+`mergeVenue` gives every live-only venue `dietary: []`. Ticking any dietary box would
+therefore have excluded every live venue and returned an empty list, permanently.
+
+The fix mirrors the capacity rule in §9: **unknown is unconfirmed, not disqualified.**
+- A venue with a **known** dietary list that lacks a requested tag is still excluded — curated
+  data is trustworthy, and excluding on it is the user's intent.
+- A venue with **no** dietary data is kept, its unmet requests recorded in `dietaryMissing`,
+  and the card shows "dietary unconfirmed — confirm by phone".
+- `excludedByDietary` continues to count only genuine exclusions.
+
+**The candidate pool was too small to yield 20.** Six search points, deduped, capped at 30
+candidates, then filtered by radius and commute, routinely leaves well under 20. The grid
+becomes two rings (centre + 6 at 0.5 × radius + 6 at 0.85 × radius = 13 points) and the
+candidate cap rises to 45. Cold-search cost goes from ~36 calls to ~58; against the free
+5,000/month that is ~86 cold searches a month, and repeat searches are free for 24h.
+
+Honesty still outranks the target: a 15-minute walk from a rural address may simply not
+contain 20 restaurants. The list shows what genuinely qualifies and states the count — it is
+never padded with venues that violate the commute limit.
 
 ## 12. Failure modes
 
