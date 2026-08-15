@@ -67,34 +67,62 @@ const labelCls =
 
 export function SearchPanel({ cuisines, busy, error, onSearch }: SearchPanelProps) {
   const [address, setAddress] = useState("");
-  const [headcount, setHeadcount] = useState(30);
-  const [maxCommute, setMaxCommute] = useState(20);
+  // Kept as strings so the fields can be cleared and retyped freely; parsed on submit.
+  const [headcount, setHeadcount] = useState("30");
+  const [maxCommute, setMaxCommute] = useState("20");
   const [mode, setMode] = useState<CommuteMode>("walking");
   const [style, setStyle] = useState<EventStyle>("seated");
   const [cuisine, setCuisine] = useState<string>("");
   const [dietary, setDietary] = useState<string[]>([]);
   const [showOptional, setShowOptional] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const isInvalidCount = (raw: string) =>
+    raw.trim() === "" || !Number.isFinite(Number(raw)) || Number(raw) < 1;
+
+  const headcountInvalid = isInvalidCount(headcount);
+  const maxCommuteInvalid = isInvalidCount(maxCommute);
 
   const submit = (values?: SearchFormValues) => {
-    const v: SearchFormValues = values ?? {
-      address: address.trim(),
-      headcount,
-      maxCommuteMinutes: maxCommute,
-      commuteMode: mode,
-      eventStyle: style,
-      cuisine: cuisine || null,
-      dietary,
-    };
     if (values) {
       setAddress(values.address);
-      setHeadcount(values.headcount);
-      setMaxCommute(values.maxCommuteMinutes);
+      setHeadcount(String(values.headcount));
+      setMaxCommute(String(values.maxCommuteMinutes));
       setMode(values.commuteMode);
       setStyle(values.eventStyle);
       setCuisine(values.cuisine ?? "");
       setDietary(values.dietary);
+      setFormError(null);
+      onSearch(values);
+      return;
     }
-    onSearch(v);
+
+    const trimmedAddress = address.trim();
+    if (!trimmedAddress) {
+      setFormError("Enter an address or landmark to search.");
+      return;
+    }
+
+    if (headcountInvalid) {
+      setFormError("Headcount must be at least 1 — enter how many people are attending.");
+      return;
+    }
+
+    if (maxCommuteInvalid) {
+      setFormError("Max commute must be at least 1 minute.");
+      return;
+    }
+
+    setFormError(null);
+    onSearch({
+      address: trimmedAddress,
+      headcount: Math.floor(Number(headcount)),
+      maxCommuteMinutes: Math.floor(Number(maxCommute)),
+      commuteMode: mode,
+      eventStyle: style,
+      cuisine: cuisine || null,
+      dietary,
+    });
   };
 
   const toggleDietary = (key: string) =>
@@ -103,6 +131,7 @@ export function SearchPanel({ cuisines, busy, error, onSearch }: SearchPanelProp
   return (
     <form
       className="flex flex-col gap-4"
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         submit();
@@ -117,7 +146,10 @@ export function SearchPanel({ cuisines, busy, error, onSearch }: SearchPanelProp
           className={inputCls}
           placeholder="e.g. 415 Mission St, San Francisco"
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={(e) => {
+            setAddress(e.target.value);
+            setFormError(null);
+          }}
           required
         />
       </div>
@@ -130,11 +162,17 @@ export function SearchPanel({ cuisines, busy, error, onSearch }: SearchPanelProp
           <input
             id="headcount"
             type="number"
+            inputMode="numeric"
             min={1}
             max={1000}
+            step={1}
             className={`${inputCls} font-data`}
             value={headcount}
-            onChange={(e) => setHeadcount(Math.max(1, Number(e.target.value)))}
+            onChange={(e) => {
+              setHeadcount(e.target.value);
+              setFormError(null);
+            }}
+            aria-invalid={formError !== null && headcountInvalid}
             required
           />
         </div>
@@ -145,11 +183,17 @@ export function SearchPanel({ cuisines, busy, error, onSearch }: SearchPanelProp
           <input
             id="commute"
             type="number"
+            inputMode="numeric"
             min={1}
             max={120}
+            step={1}
             className={`${inputCls} font-data`}
             value={maxCommute}
-            onChange={(e) => setMaxCommute(Math.max(1, Number(e.target.value)))}
+            onChange={(e) => {
+              setMaxCommute(e.target.value);
+              setFormError(null);
+            }}
+            aria-invalid={formError !== null && maxCommuteInvalid}
             required
           />
         </div>
@@ -250,8 +294,13 @@ export function SearchPanel({ cuisines, busy, error, onSearch }: SearchPanelProp
         </div>
       )}
 
-      {error && (
-        <p className="rounded-lg bg-claret-soft px-3 py-2 text-[13px] text-claret">{error}</p>
+      {(formError ?? error) && (
+        <p
+          role="alert"
+          className="rounded-lg bg-claret-soft px-3 py-2 text-[13px] text-claret"
+        >
+          {formError ?? error}
+        </p>
       )}
 
       <button
