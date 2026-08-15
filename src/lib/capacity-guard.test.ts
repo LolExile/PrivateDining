@@ -52,6 +52,20 @@ describe("acceptRoomBlock", () => {
   it("accepts an unattributed block — a single-location page names no city", () => {
     expect(acceptRoomBlock(block({ name: "Back Room", seated: 30 }), carmines)).toBe(true);
   });
+
+  it("accepts a plain city match with no neighbourhood named", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Private Room", seated: 40, location_match: "New York, NY" }),
+      carmines
+    )).toBe(true);
+  });
+
+  it("accepts a city-wide alias with no neighbourhood named", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Upstairs Room", seated: 25, location_match: "Our NYC location" }),
+      carmines
+    )).toBe(true);
+  });
 });
 
 describe("confidenceFor", () => {
