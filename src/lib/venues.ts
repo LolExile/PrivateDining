@@ -17,8 +17,6 @@ interface VenueRow {
   rating: number | null;
   review_count: number | null;
   price_tier: number | null;
-  min_spend: number | null;
-  price_trust: Venue["price_trust"];
   trust_label: Venue["trust_label"];
   dietary: string[] | null;
   event_styles: string[] | null;
@@ -31,8 +29,8 @@ interface VenueRow {
   contact_phone: string | null;
   private_rooms: {
     name: string;
-    seated_capacity: number;
-    standing_capacity: number;
+    seated_capacity: number | null;
+    standing_capacity: number | null;
     notes: string | null;
   }[];
 }
@@ -88,8 +86,6 @@ function rowToVenue(row: VenueRow): Venue {
     rating: row.rating === null ? null : Number(row.rating),
     review_count: row.review_count,
     price_tier: row.price_tier,
-    min_spend: row.min_spend,
-    price_trust: row.price_trust,
     trust_label: row.trust_label,
     dietary: row.dietary ?? [],
     event_styles: (row.event_styles ?? ["seated"]) as Venue["event_styles"],
@@ -99,5 +95,9 @@ function rowToVenue(row: VenueRow): Venue {
     menu_highlights: row.menu_highlights ?? [],
     contact,
     rooms,
+    ta_location_id: null,
+    ta_url: null,
+    ta_rating_image_url: null,
+    capacity_source_url: null,
   };
 }

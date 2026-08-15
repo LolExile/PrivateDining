@@ -36,13 +36,11 @@ export function TrustBadge({ label, prefix }: { label: TrustLabel; prefix?: stri
 export function PriceSignal({ venue }: { venue: Venue }) {
   const tier = venue.price_tier ? PRICE_TIER_LABELS[venue.price_tier] : null;
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className="font-data text-[13px] font-semibold text-ink">
-        {venue.min_spend
-          ? `$${venue.min_spend.toLocaleString()} min`
-          : tier ?? "Price unknown"}
-      </span>
-      <TrustBadge label={venue.price_trust} />
+    <span
+      className="font-data text-[13px] font-semibold text-ink"
+      title="Price level reported by Tripadvisor"
+    >
+      {tier ?? "Price unknown"}
     </span>
   );
 }

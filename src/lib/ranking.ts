@@ -34,26 +34,33 @@ const TRUST_SCORE: Record<TrustLabel, number> = {
   unverified: 0.25,
 };
 
-function relevantCapacity(room: Room, style: "seated" | "reception"): number {
-  return style === "reception"
-    ? Math.max(room.standing, room.seated)
-    : room.seated;
+function relevantCapacity(room: Room, style: "seated" | "reception"): number | null {
+  const values =
+    style === "reception" ? [room.standing, room.seated] : [room.seated];
+  const known = values.filter((v): v is number => v !== null);
+  return known.length === 0 ? null : Math.max(...known);
 }
 
-/** The smallest room that still fits the group, else the largest room. */
+/**
+ * The smallest room that still fits the group; else the largest room whose
+ * capacity we know; else an unknown-capacity room, which ranks as
+ * "unconfirmed" rather than "too small".
+ */
 function pickBestRoom(
   venue: Venue,
   headcount: number,
   style: "seated" | "reception"
 ): Room | null {
   if (venue.rooms.length === 0) return null;
-  const fitting = venue.rooms
-    .filter((r) => relevantCapacity(r, style) >= headcount)
-    .sort((a, b) => relevantCapacity(a, style) - relevantCapacity(b, style));
-  if (fitting.length > 0) return fitting[0];
-  return venue.rooms.reduce((max, r) =>
-    relevantCapacity(r, style) > relevantCapacity(max, style) ? r : max
-  );
+  const known = venue.rooms
+    .map((r) => ({ room: r, cap: relevantCapacity(r, style) }))
+    .filter((x): x is { room: Room; cap: number } => x.cap !== null);
+  if (known.length === 0) return venue.rooms[0];
+  const fitting = known
+    .filter((x) => x.cap >= headcount)
+    .sort((a, b) => a.cap - b.cap);
+  if (fitting.length > 0) return fitting[0].room;
+  return known.reduce((max, x) => (x.cap > max.cap ? x : max)).room;
 }
 
 export interface RankResult {
@@ -108,19 +115,27 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
     const bestCapacity = bestRoom
       ? relevantCapacity(bestRoom, params.eventStyle)
       : 0;
-    const capacityOk = bestCapacity >= params.headcount;
-    // A snug fit beats a cavernous room; undersized venues fall away fast.
-    const capacityScore = capacityOk
-      ? 0.6 + 0.4 * (params.headcount / bestCapacity)
-      : 0.5 * (bestCapacity / params.headcount);
+    const capacityKnown = bestCapacity !== null;
+    const capacityOk = capacityKnown && bestCapacity >= params.headcount;
+    // Unknown capacity scores as unconfirmed, not as zero: the room may well
+    // fit, and burying it under a venue that genuinely holds 4 people is wrong.
+    const capacityScore = !capacityKnown
+      ? 0.5
+      : capacityOk
+        ? 0.6 + 0.4 * (params.headcount / bestCapacity)
+        : 0.5 * (bestCapacity / params.headcount);
     factors.push({
       key: "capacity",
       label: "Capacity",
       score: capacityScore,
       weight: WEIGHTS.capacity,
-      detail: capacityOk
-        ? `${bestRoom?.name ?? "Room"} fits ${params.headcount} (max ${bestCapacity})`
-        : `Largest space holds ${bestCapacity} of ${params.headcount}`,
+      detail: !capacityKnown
+        ? bestRoom
+          ? `${bestRoom.name} — capacity unconfirmed`
+          : "No capacity data"
+        : capacityOk
+          ? `${bestRoom?.name ?? "Room"} fits ${params.headcount} (max ${bestCapacity})`
+          : `Largest space holds ${bestCapacity} of ${params.headcount}`,
     });
 
     const commuteScore = 1 - 0.7 * (commute / params.maxCommuteMinutes);
@@ -148,16 +163,17 @@ export function rankVenues(venues: Venue[], params: SearchParams): RankResult {
           : `${venue.rooms.length} space${venue.rooms.length > 1 ? "s" : ""}${trulyPrivate === 0 ? " (semi-private)" : ""}`,
     });
 
-    const priceScore =
-      TRUST_SCORE[venue.price_trust] * (venue.min_spend || venue.price_tier ? 1 : 0.5);
+    // Price is TripAdvisor's own $-tier. Known beats unknown; nothing else to
+    // weigh, since every venue's price comes from the same source.
+    const priceKnown = venue.price_tier !== null;
     factors.push({
       key: "price",
       label: "Price signal",
-      score: priceScore,
+      score: priceKnown ? 1 : 0.5,
       weight: WEIGHTS.price,
-      detail: venue.min_spend
-        ? `$${venue.min_spend.toLocaleString()} min spend (${venue.price_trust})`
-        : `Tier ${"$".repeat(venue.price_tier ?? 0) || "unknown"} (${venue.price_trust})`,
+      detail: priceKnown
+        ? `${"$".repeat(venue.price_tier!)} on Tripadvisor`
+        : "No price data",
     });
 
     factors.push({

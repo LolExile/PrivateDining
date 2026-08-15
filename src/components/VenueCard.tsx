@@ -111,13 +111,15 @@ export function VenueCard({
             >
               {capacityOk
                 ? `Fits ${headcount} ${eventStyle === "reception" ? "standing" : "seated"} — ${bestRoom?.name}`
-                : `Largest space fits ${
-                    bestRoom
-                      ? eventStyle === "reception"
-                        ? Math.max(bestRoom.standing, bestRoom.seated)
-                        : bestRoom.seated
-                      : 0
-                  } of ${headcount}`}
+                : bestRoom && bestRoom.seated === null && bestRoom.standing === null
+                  ? `${bestRoom.name} — capacity unconfirmed`
+                  : `Largest space fits ${
+                      bestRoom
+                        ? eventStyle === "reception"
+                          ? Math.max(bestRoom.standing ?? 0, bestRoom.seated ?? 0)
+                          : (bestRoom.seated ?? 0)
+                        : 0
+                    } of ${headcount}`}
             </span>
           </div>
           <FitLedger factors={result.factors} />
@@ -142,9 +144,19 @@ export function VenueCard({
                 <span className="font-medium text-ink">{room.name}</span>
                 <span className="flex-1 border-b border-dotted border-hairline" />
                 <span className="font-data text-[12px] text-ink-soft">
-                  {room.seated > 0 ? `${room.seated} seated` : ""}
-                  {room.seated > 0 && room.standing > 0 ? " · " : ""}
-                  {room.standing > 0 ? `${room.standing} standing` : ""}
+                  {room.seated === null && room.standing === null
+                    ? "capacity unconfirmed"
+                    : ""}
+                  {room.seated !== null && room.seated > 0 ? `${room.seated} seated` : ""}
+                  {room.seated !== null &&
+                  room.seated > 0 &&
+                  room.standing !== null &&
+                  room.standing > 0
+                    ? " · "
+                    : ""}
+                  {room.standing !== null && room.standing > 0
+                    ? `${room.standing} standing`
+                    : ""}
                 </span>
               </li>
             ))}

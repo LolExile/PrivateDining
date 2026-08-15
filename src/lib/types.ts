@@ -9,8 +9,9 @@ export interface MenuItem {
 
 export interface Room {
   name: string;
-  seated: number;
-  standing: number;
+  /** null when the source named the room but stated no capacity. */
+  seated: number | null;
+  standing: number | null;
   notes: string | null;
 }
 
@@ -33,8 +34,6 @@ export interface Venue {
   rating: number | null;
   review_count: number | null;
   price_tier: number | null;
-  min_spend: number | null;
-  price_trust: TrustLabel;
   trust_label: TrustLabel;
   dietary: string[];
   event_styles: EventStyle[];
@@ -44,6 +43,14 @@ export interface Venue {
   menu_highlights: MenuItem[];
   contact: Contact;
   rooms: Room[];
+  /** TripAdvisor location id — the join key for overlay and capacity data. */
+  ta_location_id: string | null;
+  /** TripAdvisor listing URL — required by their display terms. */
+  ta_url: string | null;
+  /** TripAdvisor-hosted bubble rating image; must be used over our own stars. */
+  ta_rating_image_url: string | null;
+  /** Page the room capacities were extracted from, when machine-extracted. */
+  capacity_source_url: string | null;
 }
 
 export interface SearchParams {
