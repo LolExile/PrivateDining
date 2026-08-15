@@ -1,13 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { PlansDrawer } from "@/components/PlansDrawer";
 import { ReservationModal } from "@/components/ReservationModal";
 import { SearchPanel, type SearchFormValues } from "@/components/SearchPanel";
 import { VenueCard } from "@/components/VenueCard";
 import { rankVenues, type RankResult } from "@/lib/ranking";
-import { loadVenues, BUNDLED_VENUES } from "@/lib/venues";
+import { FALLBACK_VENUES } from "@/lib/venues";
 import type { SearchParams, Venue } from "@/lib/types";
 
 const MapPanel = dynamic(() => import("@/components/MapPanel"), {
@@ -20,8 +20,8 @@ const MapPanel = dynamic(() => import("@/components/MapPanel"), {
 });
 
 export default function Home() {
-  const [venues, setVenues] = useState<Venue[]>(BUNDLED_VENUES);
-  const [dataSource, setDataSource] = useState<"supabase" | "bundled">("bundled");
+  const [venues, setVenues] = useState<Venue[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
   const [params, setParams] = useState<SearchParams | null>(null);
   const [ranked, setRanked] = useState<RankResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -32,17 +32,10 @@ export default function Home() {
   const [plansRefresh, setPlansRefresh] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    loadVenues().then(({ venues: v, source }) => {
-      setVenues(v);
-      setDataSource(source);
-    });
-  }, []);
-
-  const cuisines = useMemo(
-    () => [...new Set(venues.map((v) => v.cuisine))].sort(),
-    [venues]
-  );
+  const cuisines = useMemo(() => {
+    const live = venues.map((v) => v.cuisine);
+    return [...new Set(live.length > 0 ? live : ["Italian", "American", "Japanese"])].sort();
+  }, [venues]);
 
   const search = async (values: SearchFormValues) => {
     setBusy(true);
@@ -70,7 +63,18 @@ export default function Home() {
         dietary: values.dietary,
       };
       setParams(p);
-      setRanked(rankVenues(venues, p));
+      const vres = await fetch(
+        `/api/venues/search?lat=${p.lat}&lng=${p.lng}` +
+          `&minutes=${p.maxCommuteMinutes}&mode=${p.commuteMode}`
+      );
+      const payload = (await vres.json()) as {
+        venues: Venue[];
+        notice: string | null;
+      };
+      const found = payload.venues.length > 0 ? payload.venues : FALLBACK_VENUES;
+      setVenues(found);
+      setNotice(payload.notice);
+      setRanked(rankVenues(found, p));
       setSelectedId(null);
       listRef.current?.scrollTo({ top: 0 });
     } catch (e) {
@@ -103,14 +107,6 @@ export default function Home() {
           </h1>
         </div>
         <div className="flex items-center gap-3">
-          {dataSource === "bundled" && (
-            <span
-              className="hidden rounded-full bg-brass-soft px-2.5 py-1 text-[11px] font-semibold text-ink sm:inline"
-              title="Supabase tables not found — run the migrations in supabase/migrations to enable saving plans."
-            >
-              Demo data · database offline
-            </span>
-          )}
           <button
             type="button"
             onClick={() => setPlansOpen(true)}
@@ -141,6 +137,11 @@ export default function Home() {
 
           {ranked && params && (
             <section aria-live="polite">
+              {notice && (
+                <p className="mb-2 rounded bg-claret-soft px-2 py-1 text-[12px] text-claret">
+                  {notice}
+                </p>
+              )}
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="font-display text-[16px] font-semibold text-ink">
                   {results.length} venue{results.length === 1 ? "" : "s"} found
