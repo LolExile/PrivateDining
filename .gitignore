@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# .env holds the shared demo Supabase credentials (publishable key — safe in a browser)
+# so the app runs with zero setup. Personal overrides belong in .env.local.
+!.env
 
 # vercel
 .vercel
@@ -43,3 +46,6 @@ next-env.d.ts
 # test artifacts
 .playwright-mcp/
 /*.png
+
+# subagent-driven-development scratch (ledger, briefs, review packages)
+/.superpowers/
