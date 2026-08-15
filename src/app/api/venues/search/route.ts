@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { commuteRadiusKm, haversineKm } from "@/lib/geo";
+import { loadCapacity } from "@/lib/capacity-cache";
 import { mergeVenue } from "@/lib/merge-venue";
 import { overlayByLocationId } from "@/lib/overlay";
 import {
@@ -61,8 +62,9 @@ export async function GET(request: Request) {
       })
     );
 
+    const capacity = await loadCapacity(enriched.map((r) => r.id));
     const venues: Venue[] = enriched.map((r) => {
-      const v = mergeVenue(r, overlay.get(r.id), undefined);
+      const v = mergeVenue(r, overlay.get(r.id), capacity.get(r.id));
       return { ...v, image_url: r.image_url };
     });
 

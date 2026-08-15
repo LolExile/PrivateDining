@@ -4,8 +4,11 @@ const BASE = "https://terra.tripadvisor.com/api";
 const REVALIDATE_SECONDS = 86_400;
 /** Terra's hard page ceiling. */
 const MAX_PAGE_SIZE = 20;
-/** Stop paging even if the quota is unfilled — every location billed. */
-const MAX_PAGES = 3;
+/**
+ * Stop paging even if the quota is unfilled — every location billed. Raised
+ * from 3 to 4 so the plausible-venue filter still has room to fill 10 slots.
+ */
+const MAX_PAGES = 4;
 
 export class TripAdvisorError extends Error {
   constructor(
@@ -70,6 +73,23 @@ export function isRestaurant(main: string | null | undefined): boolean {
   return /\/Restaurant_Review/.test(main ?? "");
 }
 
+/**
+ * A venue with no rating, a very low one, or almost no reviews is usually a
+ * stub listing, a closed location, or a concession counter — not somewhere a
+ * planner can hold an event. Terra's own min_rating filter is ignored by the
+ * API, so this has to happen client-side.
+ */
+const MIN_RATING = 3.5;
+const MIN_REVIEWS = 10;
+
+export function isPlausibleVenue(
+  rating: number | null,
+  reviewCount: number | null
+): boolean {
+  if (rating === null || reviewCount === null) return false;
+  return rating >= MIN_RATING && reviewCount >= MIN_REVIEWS;
+}
+
 function primaryName(names: { value: string; primary?: boolean }[] = []): string {
   return (names.find((n) => n.primary) ?? names[0])?.value ?? "";
 }
@@ -117,6 +137,9 @@ export async function nearbyRestaurants(
       const loc = row.location;
       const main = loc?.urls?.tripadvisor?.main ?? null;
       if (!isRestaurant(main)) continue;
+      const rating = loc.overall_rating?.rating ?? null;
+      const review_count = loc.overall_rating?.count ?? null;
+      if (!isPlausibleVenue(rating, review_count)) continue;
       const rLat = loc.coordinates?.latitude;
       const rLng = loc.coordinates?.longitude;
       if (!Number.isFinite(rLat) || !Number.isFinite(rLng)) continue;
@@ -127,8 +150,8 @@ export async function nearbyRestaurants(
         city: loc.addresses?.[0]?.city ?? "",
         lat: rLat as number,
         lng: rLng as number,
-        rating: loc.overall_rating?.rating ?? null,
-        review_count: loc.overall_rating?.count ?? null,
+        rating,
+        review_count,
         ratingImageUrl: loc.overall_rating?.icon_url ?? null,
         taUrl: main,
         website: loc.urls?.official ?? null,
