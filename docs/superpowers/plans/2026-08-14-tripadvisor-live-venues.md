@@ -1200,13 +1200,17 @@ function loadKey() {
   return null;
 }
 
+// The transform half reads local JSON and needs no API. Only the MATCHING
+// half needs a key, so a missing key must not stop the script — otherwise the
+// checked-in overlay.json cannot be regenerated from committed code.
 const KEY = loadKey();
 if (!KEY) {
-  console.error(
-    "Missing TRIPADVISOR_API_KEY. Get a key at https://www.tripadvisor.com/developers " +
-      "and add TRIPADVISOR_API_KEY=... to .env.local. The key must be IP-restricted to this machine."
+  console.warn(
+    "No TRIPADVISOR_API_KEY found — transforming src/data/venues.json only.\n" +
+      "Every entry will be written with ta_location_id: null and no _match_candidate.\n" +
+      "Get a key at https://www.tripadvisor.com/developers, restrict it to this\n" +
+      "machine's public IPv4, put it in .env.local, and re-run to populate matches.\n"
   );
-  process.exit(1);
 }
 
 const venues = JSON.parse(
@@ -1238,16 +1242,18 @@ let matched = 0;
 
 for (const v of venues) {
   let hit = null;
-  try {
-    hit = await search(v.name, v.lat, v.lng);
-  } catch (e) {
-    console.warn(`  error for ${v.name}: ${e.message}`);
-  }
-  if (hit) {
-    matched++;
-    console.log(`  ✓ ${v.name} → ${hit.name} (${hit.location_id})`);
-  } else {
-    console.warn(`  no match: ${v.name}`);
+  if (KEY) {
+    try {
+      hit = await search(v.name, v.lat, v.lng);
+    } catch (e) {
+      console.warn(`  error for ${v.name}: ${e.message}`);
+    }
+    if (hit) {
+      matched++;
+      console.log(`  ✓ ${v.name} → ${hit.name} (${hit.location_id})`);
+    } else {
+      console.warn(`  no match: ${v.name}`);
+    }
   }
 
   overlay.push({
@@ -1280,7 +1286,8 @@ for (const v of venues) {
     })),
   });
 
-  await new Promise((r) => setTimeout(r, 250));
+  // Nothing to rate-limit when no requests are being made.
+  if (KEY) await new Promise((r) => setTimeout(r, 250));
 }
 
 writeFileSync(
@@ -1288,8 +1295,11 @@ writeFileSync(
   JSON.stringify(overlay, null, 2) + "\n"
 );
 console.log(
-  `\nWrote overlay.json — ${matched}/${venues.length} matched. ` +
-    `Review each _match_candidate, then set ta_location_id and delete the field.`
+  KEY
+    ? `\nWrote overlay.json — ${matched}/${venues.length} matched. ` +
+        `Review each _match_candidate, then set ta_location_id and delete the field.`
+    : `\nWrote overlay.json — ${venues.length} entries, 0 matched (no API key). ` +
+        `Re-run with a key to populate match candidates.`
 );
 ```
 
