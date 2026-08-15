@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { mergeVenue, type CapacityEntry, type OverlayEntry } from "./merge-venue";
-import type { TaDetails } from "./tripadvisor";
+import type { TerraDetails, TerraNearby } from "./tripadvisor";
 
-const live: TaDetails = {
-  location_id: "123", name: "Carmine's", address: "200 W 44th St, New York, NY",
-  city: "New York", lat: 40.7576, lng: -73.987, cuisine: "Italian",
+const live: TerraNearby & Partial<TerraDetails> = {
+  id: "123", name: "Carmine's", address: "200 W 44th St, New York, NY",
+  city: "New York", lat: 40.7576, lng: -73.987,
   rating: 4.2, review_count: 5182, price_tier: 2, phone: "(212) 221-3800",
-  website: "https://www.carminesnyc.com/", ta_url: "https://tripadvisor.com/x",
-  ta_rating_image_url: "https://tripadvisor.com/bubbles.png",
+  website: "https://www.carminesnyc.com/", taUrl: "https://tripadvisor.com/x",
+  ratingImageUrl: "https://tripadvisor.com/bubbles.png", distanceKm: 0.1,
 };
 
 const overlay: OverlayEntry = {
@@ -15,7 +15,7 @@ const overlay: OverlayEntry = {
   name: "Carmine's Italian Restaurant",
   address: "200 W 44th St, New York, NY 10036",
   lat: 40.7576, lng: -73.987, city: "New York",
-  neighbourhood: "Times Square", region: "nyc",
+  neighbourhood: "Times Square", region: "nyc", cuisine: "Italian",
   description: "Family-style Southern Italian.",
   dietary: ["vegetarian"], event_styles: ["seated"],
   menu_image_url: null, menu_highlights: [],

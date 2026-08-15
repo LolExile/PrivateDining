@@ -9,6 +9,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Italian",
     "description": "Family-style Southern Italian institution one block off Times Square, built for big tables and bigger platters.",
     "dietary": [
       "vegetarian",
@@ -69,6 +70,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Steakhouse",
     "description": "1927 Broadway steakhouse with a glass-walled dry-aging room and clubby wood-panelled private rooms.",
     "dietary": [
       "vegetarian",
@@ -128,6 +130,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Italian",
     "description": "Lidia Bastianich's Restaurant Row trattoria, famous for the unlimited fresh pasta sinfonia.",
     "dietary": [
       "vegetarian",
@@ -181,6 +184,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "American",
     "description": "The caricature-covered Broadway landmark; upstairs banquet rooms host opening-night parties.",
     "dietary": [
       "vegetarian",
@@ -235,6 +239,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Steakhouse",
     "description": "Three-story glass flagship across from Radio City with a dedicated private-dining floor.",
     "dietary": [
       "vegetarian",
@@ -296,6 +301,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Italian",
     "description": "Sprawling Theater District Italian kitchen and bar inside the old Bond clothing store sign.",
     "dietary": [
       "vegetarian",
@@ -350,6 +356,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Italian",
     "description": "Family-style red-sauce favorite steps from Times Square that routinely seats groups in the hundreds.",
     "dietary": [
       "vegetarian",
@@ -406,6 +413,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Cuban",
     "description": "Live salsa bands, mojito pitchers, and one of the biggest event floors in the Theater District.",
     "dietary": [
       "vegetarian",
@@ -460,6 +468,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Steakhouse",
     "description": "Sizzling-butter steaks in a polished midtown room with a suite of configurable private spaces.",
     "dietary": [
       "vegetarian",
@@ -520,6 +529,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "French",
     "description": "Eric Ripert's three-Michelin-star seafood temple; Le Bernardin Privé is its serene private-event floor.",
     "dietary": [
       "vegetarian",
@@ -576,6 +586,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "American",
     "description": "DJ-driven modern steakhouse with a rooftop that flips into reception mode for big corporate crowds.",
     "dietary": [
       "vegetarian",
@@ -630,6 +641,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Mexican",
     "description": "Bi-level contemporary Mexican bistro with a mezcal library and a snug mezzanine for groups.",
     "dietary": [
       "vegetarian",
@@ -678,6 +690,7 @@
     "city": "New York",
     "neighbourhood": null,
     "region": "nyc",
+    "cuisine": "Chinese",
     "description": "White-tablecloth Shanghainese standby near City Center, quietly experienced with banquet parties.",
     "dietary": [
       "vegetarian",
@@ -726,6 +739,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Seafood",
     "description": "Floor-to-ceiling aquarium columns and Bay Bridge views; private rooms open onto the Embarcadero.",
     "dietary": [
       "vegetarian",
@@ -781,6 +795,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Steakhouse",
     "description": "Waterfront steakhouse with fire-pit terrace directly under the Bay Bridge lights.",
     "dietary": [
       "vegetarian",
@@ -836,6 +851,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "American",
     "description": "James Beard-winning Belle Époque dining room in the 1889 Audiffred Building on the Embarcadero.",
     "dietary": [
       "vegetarian",
@@ -890,6 +906,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "American",
     "description": "High-ceilinged farm-to-table landmark facing the Ferry Building with a full private-dining wing.",
     "dietary": [
       "vegetarian",
@@ -952,6 +969,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Italian",
     "description": "Piemontese fine dining on California Street — house-made agnolotti and a serious Barolo list.",
     "dietary": [
       "vegetarian",
@@ -1006,6 +1024,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Seafood",
     "description": "California's oldest restaurant (1849) — cioppino, sourdough, and wood-panelled booths.",
     "dietary": [
       "gluten_free"
@@ -1052,6 +1071,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Greek",
     "description": "Rustic-luxe Aegean taverna with a roaring hearth — one of SF's most requested private rooms.",
     "dietary": [
       "vegetarian",
@@ -1107,6 +1127,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Chinese",
     "description": "Two-generation dim sum institution in Rincon Center with cart service and banquet rooms.",
     "dietary": [
       "vegetarian",
@@ -1163,6 +1184,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Chinese",
     "description": "Hong Kong-style banquet house with bay views — built for weddings, galas, and 300-person receptions.",
     "dietary": [
       "vegetarian",
@@ -1219,6 +1241,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Peruvian",
     "description": "Gastón Acurio's cebichería on the pier — pisco bar and a terrace straight over the water.",
     "dietary": [
       "vegetarian",
@@ -1274,6 +1297,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Japanese",
     "description": "Contemporary izakaya and robata grill with a sake lounge that hosts standing receptions.",
     "dietary": [
       "vegetarian",
@@ -1329,6 +1353,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Brazilian",
     "description": "Churrasco spit-roast service that scales effortlessly — gaucho chefs carve tableside all night.",
     "dietary": [
       "vegetarian",
@@ -1384,6 +1409,7 @@
     "city": "San Francisco",
     "neighbourhood": null,
     "region": "sf",
+    "cuisine": "Thai",
     "description": "Sleek modern Thai in Embarcadero Center — lounge seating groups without full privacy.",
     "dietary": [
       "vegetarian",
@@ -1433,6 +1459,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "American",
     "description": "Toes-in-the-sand beachfront bar inside Hilton Hawaiian Village — the house venue for lawn receptions.",
     "dietary": [
       "vegetarian",
@@ -1490,6 +1517,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Seafood",
     "description": "Hilton Hawaiian Village's signature oceanfront dining room — steak, seafood, and sunset views.",
     "dietary": [
       "vegetarian",
@@ -1547,6 +1575,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Seafood",
     "description": "Prince Waikiki's marina-view dining room — island buffets and one of Waikiki's largest event floors.",
     "dietary": [
       "vegetarian",
@@ -1604,6 +1633,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Hawaiian",
     "description": "Peter Merriman's farm-to-table beach house at Outrigger Reef — mai tais with lilikoi foam, live music daily.",
     "dietary": [
       "vegetarian",
@@ -1660,6 +1690,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Hawaiian",
     "description": "Sheraton Waikiki's fire-pit lounge on the sand — built for sunset happy hours at scale.",
     "dietary": [
       "vegetarian",
@@ -1707,6 +1738,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "American",
     "description": "Barefoot-luxe beachfront legend honoring Duke Kahanamoku — hula pie is mandatory.",
     "dietary": [
       "vegetarian",
@@ -1756,6 +1788,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Hawaiian",
     "description": "Plantation-house dining room above Duke's with panoramic Diamond Head views.",
     "dietary": [
       "vegetarian",
@@ -1804,6 +1837,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Steakhouse",
     "description": "Peter Luger-lineage dry-aged porterhouse in the Royal Hawaiian Center, with clubby private rooms.",
     "dietary": [
       "vegetarian",
@@ -1859,6 +1893,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Hawaiian",
     "description": "Roy Yamaguchi's flagship Hawaiian-fusion kitchen — misoyaki butterfish and melting hot chocolate soufflé.",
     "dietary": [
       "vegetarian",
@@ -1914,6 +1949,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Japanese",
     "description": "Iron Chef Morimoto's pan-Asian hall at the Alohilani — sushi, Peking duck, and ocean-view terraces.",
     "dietary": [
       "vegetarian",
@@ -1971,6 +2007,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Seafood",
     "description": "Open-air 'ocean-to-table' loft in International Market Place under a century-old banyan tree.",
     "dietary": [
       "vegetarian",
@@ -2026,6 +2063,7 @@
     "city": "Honolulu",
     "neighbourhood": null,
     "region": "waikiki",
+    "cuisine": "Chinese",
     "description": "Two-story wok house at Royal Hawaiian Center with lantern-lit balcony over Kalakaua.",
     "dietary": [
       "vegetarian",

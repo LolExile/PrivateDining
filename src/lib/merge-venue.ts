@@ -1,4 +1,4 @@
-import type { TaDetails } from "./tripadvisor";
+import type { TerraDetails, TerraNearby } from "./tripadvisor";
 import type {
   Contact, EventStyle, MenuItem, Room, TrustLabel, Venue,
 } from "./types";
@@ -20,6 +20,8 @@ export interface OverlayEntry {
   /** Disambiguates branches of a chain for the extraction guard (Task 10). */
   neighbourhood: string | null;
   region: string;
+  /** Terra supplies no cuisine field; this is the only source. */
+  cuisine: string | null;
   description: string | null;
   dietary: string[];
   event_styles: EventStyle[];
@@ -44,7 +46,7 @@ export interface CapacityEntry {
  * honestly labelled "needs a call".
  */
 export function mergeVenue(
-  live: TaDetails,
+  live: TerraNearby & Partial<TerraDetails>,
   overlay: OverlayEntry | undefined,
   capacity: CapacityEntry | undefined
 ): Venue {
@@ -58,18 +60,18 @@ export function mergeVenue(
       : "unverified";
 
   return {
-    id: overlay?.id ?? `ta-${live.location_id}`,
+    id: overlay?.id ?? `ta-${live.id}`,
     name: live.name,
     address: live.address,
     city: live.city,
     region: overlay?.region ?? live.city.toLowerCase().replace(/\s+/g, "-"),
     lat: live.lat,
     lng: live.lng,
-    cuisine: live.cuisine,
+    cuisine: overlay?.cuisine ?? "Restaurant",
     description: overlay?.description ?? null,
     rating: live.rating,
     review_count: live.review_count,
-    price_tier: live.price_tier,
+    price_tier: live.price_tier ?? null,
     trust_label,
     dietary: overlay?.dietary ?? [],
     event_styles: overlay?.event_styles ?? ["seated", "reception"],
@@ -80,12 +82,12 @@ export function mergeVenue(
     contact: {
       name: overlay?.contact.name ?? null,
       email: overlay?.contact.email ?? null,
-      phone: overlay?.contact.phone ?? live.phone,
+      phone: overlay?.contact.phone ?? live.phone ?? null,
     },
     rooms,
-    ta_location_id: live.location_id,
-    ta_url: live.ta_url,
-    ta_rating_image_url: live.ta_rating_image_url,
+    ta_location_id: live.id,
+    ta_url: live.taUrl,
+    ta_rating_image_url: live.ratingImageUrl,
     capacity_source_url: useCapacity ? capacity.source_url : null,
   };
 }

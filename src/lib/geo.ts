@@ -43,6 +43,15 @@ export function commuteMinutes(
 
 export const SEARCH_RADIUS_MILES = 20;
 
+/** Straight-line radius reachable within the commute limit; inverse of commuteMinutes. */
+export function commuteRadiusKm(
+  maxCommuteMinutes: number,
+  mode: CommuteMode
+): number {
+  const km = (maxCommuteMinutes * SPEED_KMH[mode]) / (ROUTE_FACTOR * 60);
+  return Math.min(km, SEARCH_RADIUS_MILES / 0.621371);
+}
+
 export function formatMiles(miles: number): string {
   return miles < 0.1 ? "< 0.1 mi" : `${miles.toFixed(1)} mi`;
 }
