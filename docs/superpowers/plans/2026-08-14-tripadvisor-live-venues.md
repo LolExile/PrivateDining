@@ -1325,7 +1325,7 @@ Expected: at least 1, assuming at least one NYC venue was confirmed.
 git rm scripts/enrich-yelp.mjs
 ```
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add scripts/match-overlay.mjs src/data/overlay.json
@@ -2309,7 +2309,7 @@ In the expanded room section of `VenueCard.tsx`, add below the room list:
           )}
 ```
 
-- [ ] **Step 5: Verify**
+- [ ] **Step 7: Verify**
 
 ```bash
 npm run build && npm run dev
@@ -2317,7 +2317,7 @@ npm run build && npm run dev
 
 Open the app, run a search, and confirm each card shows a TripAdvisor bubble image, a logo at least 20px high, and a working listing link. Venues with extracted capacity show the source line.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add public/tripadvisor.svg src/components/Badges.tsx src/components/VenueCard.tsx
@@ -2329,25 +2329,38 @@ git commit -m "feat: add required TripAdvisor attribution to venue cards"
 ### Task 14: Result cap, booking copy, and documentation
 
 **Files:**
-- Modify: `src/app/page.tsx:90-92`, `:144-151`
-- Modify: `src/components/ReservationModal.tsx:152-156`
-- Modify: `README.md`
+- Modify: `src/app/page.tsx` (result cap, truncation copy, notice clearing, cuisine affordance)
+- Modify: `src/components/ReservationModal.tsx` (success copy)
+- Modify: `README.md` (six places — see Step 6)
+
+> Line numbers are deliberately omitted: an earlier task rewrote `page.tsx` and the repository
+> owner edits these files concurrently. Anchor on the quoted text, not on positions.
 
 - [ ] **Step 1: Cap the list at 20**
 
-In `src/app/page.tsx`, replace lines 90-92:
+In `src/app/page.tsx`, replace:
+
+```ts
+  const results = ranked?.results ?? [];
+  const top = results.slice(0, 3);
+```
+
+with:
 
 ```ts
   const MAX_RESULTS = 20;
   const allResults = ranked?.results ?? [];
   const results = allResults.slice(0, MAX_RESULTS);
   const top = results.slice(0, 3);
-  const rest = results.slice(3);
 ```
+
+Leave the following `rest` line as it is.
 
 - [ ] **Step 2: State the truncation**
 
-Replace the heading (lines 145-147) so a capped list never reads as the whole set:
+Replace the results heading, which currently reads
+`{results.length} venue{results.length === 1 ? "" : "s"} found`, so a capped list never reads
+as the whole set:
 
 ```tsx
                 <h2 className="font-display text-[16px] font-semibold text-ink">
@@ -2357,9 +2370,47 @@ Replace the heading (lines 145-147) so a capped list never reads as the whole se
                 </h2>
 ```
 
-- [ ] **Step 3: Make the mock booking explicit**
+- [ ] **Step 3: Clear the notice when a later search fails**
 
-In `src/components/ReservationModal.tsx`, replace the success copy at line 154:
+Carried over from Task 8's review. In `src/app/page.tsx`, the `catch` block sets `searchError`
+but never clears `notice`, so a stale banner from an earlier search can sit beside a fresh
+error message. Add the clear alongside it:
+
+```ts
+    } catch (e) {
+      setNotice(null);
+      setSearchError((e as Error).message);
+```
+
+- [ ] **Step 4: Make the pre-search cuisine options read as examples**
+
+Also carried from Task 8's review. Before the first search there is no venue data, so the
+cuisine dropdown falls back to a hardcoded list. Cuisine is a *soft* ranking factor and never a
+filter, so a phantom option costs ranking boost rather than results — but the list is presented
+identically to real, area-derived values, which is misleading.
+
+Make the fallback visibly provisional. In `src/app/page.tsx` the fallback list is currently
+inline in the `cuisines` memo; give it a named constant so the intent is legible:
+
+```ts
+  /** Shown only before the first search, when no live venues exist yet. */
+  const EXAMPLE_CUISINES = ["Italian", "American", "Japanese"];
+
+  const cuisines = useMemo(() => {
+    const live = venues.map((v) => v.cuisine);
+    return [...new Set(live.length > 0 ? live : EXAMPLE_CUISINES)].sort();
+  }, [venues]);
+```
+
+Then surface the distinction in the UI: when `venues.length === 0`, the cuisine control should
+indicate these are examples that narrow to the area after searching. Match the surrounding
+`SearchPanel` markup and class conventions; a short hint line or a label suffix is enough. Do
+not restructure the panel, and do not disable the control — picking one is still valid.
+
+- [ ] **Step 5: Make the mock booking explicit**
+
+In `src/components/ReservationModal.tsx`, replace the success copy that currently reads
+"The dinner and its attendees are stored.":
 
 ```tsx
               The dinner and its attendees are saved. This is a plan only — no
@@ -2367,7 +2418,37 @@ In `src/components/ReservationModal.tsx`, replace the success copy at line 154:
               Find it any time under Saved plans, and
 ```
 
-- [ ] **Step 4: Rewrite the README**
+- [ ] **Step 6: Update the README — six places, not one**
+
+> **Read the README first.** The repository owner rewrote and restructured it after this plan
+> was written, and is still editing it. Preserve their structure, headings, and table
+> formatting — edit the sections below in place; do not replace the file. Re-read it
+> immediately before editing in case it changed again.
+
+The README documents the Yelp-and-seed architecture in six places. All six now describe deleted
+code, which makes it actively misleading to anyone setting the project up:
+
+1. **The Commands table** — drop the `node scripts/generate-seed.mjs` and
+   `node scripts/enrich-yelp.mjs` rows (both scripts are deleted). Add `npm test`,
+   `node scripts/match-overlay.mjs`, and `npm run extract-capacity`.
+2. **`### Editing venue data`** — it names `src/data/venues.json` as the single source of truth.
+   That file is deleted; rewrite the section around `src/data/overlay.json`, which now carries
+   only the private-dining data TripAdvisor cannot supply.
+3. **`### Refreshing from Yelp`** — becomes the TripAdvisor section (see the copy below).
+4. **The Supabase setup steps** — they tell the reader to run `0002_seed.sql` for "38 curated
+   venues and 72 private rooms". That file is deleted; the sequence is now
+   `0001_schema.sql` then `0003_live_venues.sql`.
+5. **The blockquote warning** about `0002_seed.sql` beginning with `truncate public.venues
+   cascade` — that table no longer exists.
+6. **The offline-fallback paragraph** describing the "Demo data · database offline" chip — that
+   chip was removed; the app now shows a live-data notice and falls back to curated overlay
+   venues only when TripAdvisor is unreachable.
+
+Also update the "Result data per venue" feature bullet to say "TripAdvisor rating" rather than
+"Yelp-style star rating", and drop the "Live data: Google Places / Yelp Fusion APIs…" item from
+"With more time", which this work has now done.
+
+Use this for section 3:
 
 Replace the "(Optional) Refresh venue data from Yelp" section (lines 57-68) with:
 
@@ -2399,9 +2480,9 @@ TripAdvisor has no private-dining data, so room capacities come from two other p
 Venues with neither are shown honestly as **needs a call**.
 ````
 
-Also update the "Result data per venue" bullet (line 22) to say "TripAdvisor rating" rather than "Yelp-style star rating", and replace the "Live data" bullet under "With more time" (line 107) since it is now done.
 
-- [ ] **Step 5: Verify**
+
+- [ ] **Step 7: Verify**
 
 ```bash
 npm run build && npm test && npx eslint
@@ -2409,7 +2490,7 @@ npm run build && npm test && npx eslint
 
 Expected: all pass. In the app, run a broad search and confirm the heading reads "Top 20 of N venues found" and only 20 cards render.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add src/app/page.tsx src/components/ReservationModal.tsx README.md
