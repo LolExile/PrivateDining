@@ -66,6 +66,33 @@ describe("acceptRoomBlock", () => {
       carmines
     )).toBe(true);
   });
+
+  const midtownNy = {
+    city: "New York",
+    address: "60 W 45th St, New York, NY 10036",
+    neighbourhood: "Midtown",
+  };
+
+  it("rejects the same neighbourhood name in another city", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Salon", seated: 40, location_match: "Midtown, Atlanta" }),
+      midtownNy
+    )).toBe(false);
+  });
+
+  it("accepts its own neighbourhood when the claim names no other place", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Salon", seated: 40, location_match: "Midtown" }),
+      midtownNy
+    )).toBe(true);
+  });
+
+  it("accepts its own neighbourhood alongside its own city", () => {
+    expect(acceptRoomBlock(
+      block({ name: "Salon", seated: 40, location_match: "Midtown, New York" }),
+      midtownNy
+    )).toBe(true);
+  });
 });
 
 describe("confidenceFor", () => {

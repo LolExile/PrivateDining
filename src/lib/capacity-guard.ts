@@ -59,7 +59,19 @@ export function acceptRoomBlock(
   if (street && claim.includes(street[0].trim())) return true;
 
   const own = venue.neighbourhood ? normalize(venue.neighbourhood) : null;
-  if (own && claim.includes(own)) return true;
+  if (own && claim.includes(own)) {
+    const aliases = CITYWIDE_ALIASES[city] ?? [];
+    const cityNamed = Boolean(city) && claim.includes(city);
+    const aliasNamed = aliases.some((a) => claim.includes(a));
+    // "Times Square" on its own, with nothing else in the claim, is a
+    // single-location page naming its own room area — trust it.
+    const nothingElseNamed = claim.replace(own, "").trim().length <= 3;
+    if (cityNamed || aliasNamed || nothingElseNamed) return true;
+    // The neighbourhood matches but the claim also carries locality text that
+    // is neither our city nor one of its aliases — it may be another city's
+    // same-named neighbourhood ("Midtown, Atlanta"). Fall through to the
+    // stricter rules, which will reject unless our city turns up.
+  }
 
   // A different neighbourhood of the same city means a different branch.
   const known = CITY_NEIGHBOURHOODS[city] ?? [];
